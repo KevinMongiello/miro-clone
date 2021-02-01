@@ -1,72 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Perform } from './Board.model';
+import { SelectionTool, ShapeTool } from '../Tools/Tools';
 import './Board.scss';
-
-abstract class Tool {
-	protected engaged: boolean;
-	public name: string;
-	public label: string;
-	
-	constructor(name, label, engaged = false) {
-		this.name = name;
-		this.label = label;
-		this.engaged = engaged;
-	}
-
-	protected engage() { this.engaged = true; }
-	protected disengage() { this.engaged = false; }
-
-	public abstract performStart?: Perform;
-	public abstract performMove?: Perform;
-	public abstract performEnd?: Perform;
-}
-
-class PanTool extends Tool {
-	constructor() {
-		super('pan', 'P');
-	}
-
-	public performStart: Perform = (render, objects, p_0, p_1) => {
-		
-	}
-}
-
-/* code for shape creation tool performEnd: */
-// const [x0, y0] = this.p_0;
-// const [x1, y1] = getEventPos(e);
-// const size = Math.max(x1 - x0, y1 - y0);
-// this.objects.addObject(...this.p_0, size);
-// this.render()
-
-class SelectionTool extends Tool {
-	constructor() {
-		super('selection', 'S', false);
-	}
-
-	public performStart: Perform = (render, objects, p_0, p_1) => {
-		this.engage();
-		objects.createSelectionObject(p_0);
-		render();
-	}
-	
-	public performMove: Perform = (render, objects, p_0, p_1) => {
-		if (this.engaged) {
-			const [x0, y0] = p_0;
-			const [x1, y1] = p_1;
-			const [width, height] = [x1 - x0, y1 - y0];
-			
-			objects.update(objects.getSelectionObject(), { width, height });
-			console.log('selection tool is moving!!!', objects.getSelectionObject())
-			render();
-		}
-	}
-	
-	public performEnd: Perform = (render, objects, p_0, p_1) => {
-		this.disengage();
-		objects.removeSelectionObject();
-		render();
-	}
-}
 
 export class BoardObject {
 	static defaultOptions = {
@@ -113,6 +47,7 @@ export class Objects {
 	}
 
 	public addObject(...args) {
+		console.log('adding object: ', args);
 		this.userObjects = [...this.userObjects, new BoardObject(...args)]
 	}
 	public createSelectionObject(pos) {
@@ -174,10 +109,11 @@ class Board extends Singleton {
 	};
 	private onMouseMove = (e) => {
 		const p_1 = getEventPos(e);
-		this.currentTool.performMove(this.render, this.objects, this.p_0, p_1);
+		this.currentTool?.performMove(this.render, this.objects, this.p_0, p_1);
 	};;
 	private onMouseUp = (e) => {
-		this.currentTool.performEnd(this.render, this.objects);
+		const p_1 = getEventPos(e);
+		this.currentTool.performEnd(this.render, this.objects, this.p_0, p_1);
 	};
 
 	private render = () => {
@@ -217,14 +153,17 @@ class Board extends Singleton {
 }
 
 const tools = [
-	new SelectionTool()
+	new SelectionTool(),
+	new ShapeTool()
 ];
+
+let board;
 
 export default function BoardContainer() {
 	const canvasRef = useRef(null);
 	const [mouseListeners, setMouseListeners] = useState({ onMouseMove: () => console.log('something iswrong, the default mouse listeners should have been overwritten.')});
-	const [toolHandler, setToolHandler] = useState(() => undefined);
-
+	// const [toolHandler, setToolHandler] = useState(() => undefined);
+	
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		const container = document.querySelector('body');
@@ -233,7 +172,7 @@ export default function BoardContainer() {
 		const ctx = canvas.getContext('2d');
 		ctx.fillStyle = 'blue';
 		ctx.fillRect(0, 0, 100, 100);
-		const board = new Board(canvas, ctx, tools[0]);
+		board = new Board(canvas, ctx, tools[0]);
 		setMouseListeners(board.getMouseListeners());
 		// setToolHandler(board.setTool);
 	}, [])
@@ -245,8 +184,7 @@ export default function BoardContainer() {
 		/>
 		<div className='controls'>
 			{tools.map(tool => (
-				// <div key={tool.name} onClick={() => toolHandler(tool)}>
-				<div key={tool.name}>
+				<div key={tool.name} onClick={() => board.setTool(tool)}>
 					{tool.label}
 				</div>
 			))}
