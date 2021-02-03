@@ -15,14 +15,25 @@ body {
 	position: relative;
 }
 
+.button {
+	cursor: pointer;
+	padding: 1rem;
+	border: 1px solid black;
+}
+
 .controls {
+	position: absolute;
+	left: 50%;
+	top: 25px;
+	transform: translateX(-50%);
+	> div {
+		display: inline-block;
+	}
+}
+
+.tools {
 	position: absolute;
 	left: 25px;
 	top: 50%;
 	transform: translateY(-50%);
-	> div {
-		padding: 1rem;
-		border: 1px solid black;
-		cursor: pointer;
-	}
 }

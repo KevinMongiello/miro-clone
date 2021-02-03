@@ -1,4 +1,6 @@
 import { Perform } from '../Board/Board.model';
+import { Position } from '../common/types';
+import { Objects } from '../Objects/Objects';
 
 abstract class Tool {
 	protected engaged: boolean;
@@ -19,15 +21,15 @@ abstract class Tool {
 	public abstract performEnd?: Perform;
 }
 
-class PanTool extends Tool {
-	constructor() {
-		super('pan', 'P');
-	}
+// class PanTool extends Tool {
+// 	constructor() {
+// 		super('pan', 'P');
+// 	}
 
-	public performStart: Perform = (render, objects, p_0, p_1) => {
+// 	public performStart: Perform = (render, objects, p_0, p_1) => {
 		
-	}
-}
+// 	}
+// }
 
 export class ShapeTool extends Tool {
 	constructor() {
@@ -60,11 +62,11 @@ export class ShapeTool extends Tool {
 		render();
 	}
 
-	public addShape (objects, p_0, p_1) {
+	public addShape (objects: Objects, p_0: Position, p_1: Position) {
 		const [x0, y0] = p_0;
 		const [x1, y1] = p_1
 		const size = Math.max(x1 - x0, y1 - y0);
-		objects.addObject(...p_0, size);
+		objects.addObject(p_0, size);
 	}
 }
 
@@ -74,7 +76,7 @@ export class SelectionTool extends Tool {
 		super('selection', 'S', false);
 	}
 
-	public performStart: Perform = (render, objects, p_0, p_1) => {
+	public performStart: Perform = (render, objects, p_0) => {
 		this.engage();
 		objects.createSelectionObject(p_0);
 		render();
@@ -92,7 +94,7 @@ export class SelectionTool extends Tool {
 		}
 	}
 	
-	public performEnd: Perform = (render, objects, p_0, p_1) => {
+	public performEnd: Perform = (render, objects) => {
 		this.disengage();
 		objects.removeSelectionObject();
 		render();

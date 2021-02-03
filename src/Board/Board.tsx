@@ -1,107 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Objects } from '../Objects/Objects';
+import { ObjectsHistory } from '../Objects/ObjectsHistory';
 import { SelectionTool, ShapeTool } from '../Tools/Tools';
 import './Board.scss';
 
-export class BoardObject {
-	static defaultOptions = {
-		fillStyle: 'violet',
-		stroke: 0,
-		strokeStyle: '#000',
-	}
-	public x: number;
-	public y: number;
-	public height: number;
-	public width: number;
-	public color: string;
-	public fillStyle: string;
-	public stroke: number;
-	public strokeStyle: string;
-
-	constructor(...args)
-	constructor(x, y, size, _options = BoardObject.defaultOptions) {
-		this.x = x;
-		this.y = y;
-		this.width = size;
-		this.height = size;
-		const options = Object.assign(BoardObject.defaultOptions, _options);
-		this.fillStyle = options.fillStyle;
-		this.stroke = options.stroke;
-		this.strokeStyle = options.strokeStyle;
-	}
-}
-
-export class Objects {
-	private userObjects = [];
-	private boardObjects = [];
-	private selectionObject = null;
-
-	public getUserObjects() { return this.userObjects; }
-	public getBoardObjects() { return this.boardObjects; }
-	public getSelectionObject () { return this.selectionObject; }
-	public getAllObjects() {
-		return [
-			...this.getUserObjects(),
-			...this.getBoardObjects(),
-			this.selectionObject
-		].filter(Boolean)
-	}
-
-	public addObject(...args) {
-		console.log('adding object: ', args);
-		this.userObjects = [...this.userObjects, new BoardObject(...args)]
-	}
-	public createSelectionObject(pos) {
-		const options = {
-			stroke: 3,
-			strokeStyle: 'CornflowerBlue',
-			fillStyle: 'rgba(50, 25, 170, 0.035)'
-		}
-		this.selectionObject = new BoardObject(...pos, 1, options);
-	}
-	public removeSelectionObject() {
-		this.selectionObject = null;
-	}
-	public update(object, changes) {
-		Object.assign(object, changes);
-	}
-}
-
-class Singleton {
-	static instance = null;
-	static get() {
-		return this.instance;
-	}
-
-	constructor() {
-		// @ts-ignore
-		if (this.constructor.instance) {
-			throw Error(this.constructor.name + ' is a singleton class, and initializiation is only allowed once at startup');
-		}
-		// @ts-ignore
-		this.constructor.instance = this;
-	}
-}
-
 const getEventPos = e => [e.clientX, e.clientY];
 
-class Board extends Singleton {
-	private ctx: CanvasRenderingContext2D;
-	private canvas: HTMLCanvasElement;
+class Board {
+	public ctx: CanvasRenderingContext2D;
+	public canvas: HTMLCanvasElement;
 	private objects: Objects;
 	private p_0: number[] | null;
 	private currentTool: Tool;
+	public history: ObjectsHistory;
 	
 	constructor(canvas, ctx, tool) {
-		super();
 		this.canvas = canvas;
 		this.ctx = ctx;
 		this.objects = new Objects();
-		console.log('setting currentTool via constructor: ', tool);
+		this.history = new ObjectsHistory(this.objects);
 		this.setTool(tool);
+		this.render();
 	}
-	
-	getCanvas() { return this.canvas; }
-	getCtx() { return this.ctx; }
 	
 	private onMouseDown = (e) => {
 		this.p_0 = getEventPos(e);
@@ -119,12 +39,12 @@ class Board extends Singleton {
 	private render = () => {
 		const objects = this.objects.getAllObjects();
 		this.clear();
-		// render fills
+		// fills
 		objects.forEach(obj => {
 			this.ctx.fillStyle = obj.fillStyle;
 			this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
 		});
-		// render strokes
+		// strokes
 		objects.forEach(obj => {
 			if (obj.stroke) {
 				this.ctx.strokeStyle = obj.strokeStyle;
@@ -139,9 +59,26 @@ class Board extends Singleton {
 	}
 
 	public setTool = (tool: Tool) => {
-		console.log('setting tool via setter: ', tool);
 		this.currentTool = tool;
 	};
+
+	public undo = () => {
+		this.history.undo();
+		this.objects = this.history.currentState.objects;
+		this.render();
+	}
+	public redo = () => {
+		this.history.redo();
+		this.objects = this.history.currentState.objects;
+		this.render();
+	}
+	public save = () => {
+		this.history.add(this.objects);
+	}
+
+	public get getCanUndo() { return this.history.hasLast() }
+	public get getCanRedo() { return this.history.hasNext() }
+	public get isDirty() { return true }
 
 	getMouseListeners() { 
 		return {
@@ -157,12 +94,18 @@ const tools = [
 	new ShapeTool()
 ];
 
+const makeControls = board => [
+	{ name: 'undo', label: 'undo', action: board.undo, disabled: !board.getCanUndo },
+	{ name: 'redo', label: 'redo', action: board.redo, disabled: !board.getCanRedo },
+	{ name: 'save', label: 'save', action: board.save, disabled: !board.isDirty },
+];
+
 let board;
+let controls = [];
 
 export default function BoardContainer() {
 	const canvasRef = useRef(null);
 	const [mouseListeners, setMouseListeners] = useState({ onMouseMove: () => console.log('something iswrong, the default mouse listeners should have been overwritten.')});
-	// const [toolHandler, setToolHandler] = useState(() => undefined);
 	
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -170,11 +113,9 @@ export default function BoardContainer() {
 		canvas.width = container.clientWidth;
 		canvas.height = container.clientHeight;
 		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = 'blue';
-		ctx.fillRect(0, 0, 100, 100);
 		board = new Board(canvas, ctx, tools[0]);
 		setMouseListeners(board.getMouseListeners());
-		// setToolHandler(board.setTool);
+		controls = makeControls(board);
 	}, [])
 
 	return <div className='board-container'>
@@ -183,8 +124,15 @@ export default function BoardContainer() {
 			ref={canvasRef}
 		/>
 		<div className='controls'>
+		{controls.map(control => (
+				<div className='button' key={control.name} onClick={control.action}>
+					{control.label}
+				</div>
+			))}
+		</div>
+		<div className='tools'>
 			{tools.map(tool => (
-				<div key={tool.name} onClick={() => board.setTool(tool)}>
+				<div className='button' key={tool.name} onClick={() => board.setTool(tool)}>
 					{tool.label}
 				</div>
 			))}
