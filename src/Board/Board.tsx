@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Objects } from '../Objects/Objects';
 import { ObjectsHistory } from '../Objects/ObjectsHistory';
-import { SelectionTool, ShapeTool } from '../Tools/Tools';
+import { SelectionTool, ShapeTool } from '../Tools';
 import './Board.scss';
 
 const getEventPos = e => [e.clientX, e.clientY];
