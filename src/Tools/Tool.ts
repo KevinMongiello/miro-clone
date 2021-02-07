@@ -18,4 +18,3 @@ export abstract class Tool {
 	public abstract performMove?: Perform;
 	public abstract performEnd?: Perform;
 }
-
