@@ -1,59 +1,100 @@
-import { Position } from "../common/types";
-import { BoardObject, BoardObjectOptions } from "./Object";
-
-const defaultObjects = {
-	useObjects: [new BoardObject([100, -50], 100)]
-};
+import { Position, Size } from "../common/types";
+import { BoardObject } from "./Object";
+import { BoardObjectConfig, BoardObjectConfigUpdate } from './Object.model'
+import { ObjectsHistory } from './ObjectsHistory';
+import { ObjectsState } from './ObjectsState';
 
 export class Objects {
-	private userObjects = [];
-	private boardObjects = [];
-	private selectionObject = null;
+	private state: ObjectsState;
+	private history: ObjectsHistory = new ObjectsHistory();
 
-	constructor(objects = defaultObjects) {
+	constructor(objects = []) {
 		Object.assign(this, objects);
+		this.save(objects);
+	}
+	
+	/**
+	 * State Business Logic
+	 */
+	private save(objects: BoardObject[] = this.state.userObjects) { 
+		this.state = this.history.save(objects);
+	 }
+
+	/**
+	 * Modifiers
+	 */
+	private createObject(...args: [Position, Position, BoardObjectConfig?]): BoardObject;
+	private createObject(p_0: Position, p_1: Position, options?: BoardObjectConfig) {
+		const [x0, y0] = p_0;
+		const [x1, y1] = p_1
+		const size = [x1 - x0, y1 - y0];
+		return new BoardObject(p_0, size, options);
 	}
 
-	private setUserObjects(objects) { this.userObjects = objects; }
+	public addObject(pos: Position, size: Size, options?: BoardObjectConfig): void {
+		this.save([
+			...this.userObjects,
+			this.createObject(pos, size, options)
+		]);
+	}
 
-	private create(...args);
-	private create(pos: Position, size: number, options: BoardObjectOptions) {
-		return new BoardObject(pos, size, options);
+	getObject(id: string): BoardObject | undefined {
+		return this.userObjects.find(obj => obj.id = id);
+	}
+
+	// Perhaps a premature optimization, but i think it will be much faster
+	// to mutate an object, say, the selection object while it is resizing, then to
+	// create a new object ever 16ms.
+	// Plus, as of now, creating a new object would make a new copy of ObjectState
+	public mutateObject(object: BoardObject, changes: BoardObjectConfig): void {
+		Object.assign(object, changes);
+	}
+
+	// Make a final update which creates a new history state.
+	public updateObject(object: string | Object, changes: BoardObjectConfig): void {
+		const obj = typeof object === 'string'
+			? this.getObject(object) // its an objectId
+			: object;
+		
+		Object.assign(object, changes);
+		this.save();
 	}
 
 	/**
 	 * Getters
 	 */
-	public getUserObjects() { return this.userObjects; }
-	public getBoardObjects() { return this.boardObjects; }
-	public getSelectionObject () { return this.selectionObject; }
-	public getAllObjects() {
+	public get userObjects(): BoardObject[] { return this.state.userObjects; }
+	public get gridObjects(): BoardObject[] { return this.state.gridObjects; }
+	public get selectionObject (): BoardObject | null { return this.state.selectionObject; }
+	public get allObjects(): BoardObject[] {
 		return [
-			...this.getUserObjects(),
-			...this.getBoardObjects(),
+			...this.userObjects,
+			...this.gridObjects,
 			this.selectionObject
-		].filter(Boolean)
+		].filter(Boolean) as BoardObject[]
 	}
 
 	/**
-	 * Biz Logic
+	 * Selection
 	 */
-	public addObject(...args) {
-		this.setUserObjects([
-			...this.userObjects,
-			this.create(...args)
-		]);
-	}
-	public createSelectionObject(pos) {
+	public createSelectionObject(pos: Position) {
 		const options = {
 			stroke: 3,
 			strokeStyle: 'CornflowerBlue',
 			fillStyle: 'rgba(50, 25, 170, 0.035)'
 		}
-		this.selectionObject = new BoardObject(pos, 1, options);
+		this.state.selectionObject = new BoardObject(pos, [1, 1], options);
 	}
-	public removeSelectionObject() { this.selectionObject = null; }
-	public update(object, changes) {
-		Object.assign(object, changes);
+	public updateSelection(settings: BoardObjectConfigUpdate) {
+		Object.assign(this.selectionObject, settings);
 	}
+	public removeSelectionObject() { this.state.selectionObject = null; }
+
+	/**
+	 * History methods
+	 */
+	public undo() { this.history.undo(); }
+	public redo() { this.history.redo(); }
+	public canUndo() { return this.history.hasLast(); }
+	public canRedo() { return this.history.hasNext(); }
 }

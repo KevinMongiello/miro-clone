@@ -1,20 +1,19 @@
 import { Perform } from "./Tool.model";
 
 export abstract class Tool {
-	protected engaged: boolean;
+	protected engaged: boolean = false;
 	public name: string;
 	public label: string;
 	
-	constructor(name, label, engaged = false) {
+	constructor(name: string, label: string) {
 		this.name = name;
 		this.label = label;
-		this.engaged = engaged;
 	}
 
 	protected engage() { this.engaged = true; }
 	protected disengage() { this.engaged = false; }
 
-	public abstract performStart?: Perform;
-	public abstract performMove?: Perform;
-	public abstract performEnd?: Perform;
+	public abstract performStart: Perform;
+	public abstract performMove: Perform;
+	public abstract performEnd: Perform;
 }

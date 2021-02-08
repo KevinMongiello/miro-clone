@@ -1,57 +1,86 @@
 import React from 'react';
+import { Position } from '../common/types';
+import { BoardObjectConfig } from '../Objects/Object.model';
 import { Objects } from '../Objects/Objects';
-import { ObjectsHistory } from '../Objects/ObjectsHistory';
-import { SelectionTool, ShapeTool } from '../Tools';
-import { ControlModel } from './Board.model';
+
+import { SelectionTool, ShapeTool, Tool } from '../Tools';
+import { BoardProps, ControlModel } from './Board.model';
 import './Board.scss';
 
-const getEventPos = e => [e.clientX, e.clientY];
+const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => [e.clientX, e.clientY];
 
 export default class Board extends React.Component {
 	public ctx: CanvasRenderingContext2D;
-	public canvas: HTMLCanvasElement | null;
+	public canvas: HTMLCanvasElement;
 	private objects: Objects;
-	private p_0: number[] | null;
+	private p_0: Position | null;
 	private currentTool: Tool;
-	public history: ObjectsHistory;
 	private controls: ControlModel[];
 	
-	constructor(props) {
+	/**
+	 * Initialization
+	 */
+	constructor(props: BoardProps) {
 		super(props);
-		this.canvas = null;
 		this.controls = this.makeControls();
+		this.objects = new Objects();
 	}
 	
 	componentDidMount() {
 		this.mountCanvas();
-		this.objects = new Objects();
-		this.history = new ObjectsHistory(this.objects);
 		this.setTool(tools[0]);
-		this.ctx = this.canvas.getContext('2d');
+		this.ctx = this.canvas.getContext('2d')!;
 		this.renderCanvas();
 	}
 
-	mountCanvas() {
+	private mountCanvas() {
 		const container = document.querySelector('body');
-		this.canvas.width = container.clientWidth;
-		this.canvas.height = container.clientHeight;
+		if (!container) {
+			throw Error('The container might not have been mounted in time.')
+		}
+		this.canvas.width = container.clientWidth || 0;
+		this.canvas.height = container.clientHeight || 0;
 	}
+
+	/**
+	 * Mouse Mouse Handlers
+	 */
 	
-	private onMouseDown = (e) => {
-		this.p_0 = getEventPos(e);
-		this.currentTool.performStart(this.renderCanvas, this.objects, this.p_0, undefined);
+	private onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+		this.p_0 = getMousePosition(e);
+		this.currentTool.performStart(this, this.p_0);
+		this.renderCanvas();
 	};
-	private onMouseMove = (e) => {
-		const p_1 = getEventPos(e);
-		this.currentTool?.performMove(this.renderCanvas, this.objects, this.p_0, p_1);
-	};;
-	private onMouseUp = (e) => {
-		const p_1 = getEventPos(e);
-		this.currentTool.performEnd(this.renderCanvas, this.objects, this.p_0, p_1);
+	private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+		const p_1 = getMousePosition(e);
+		this.currentTool.performMove(this, this.p_0, p_1);
+		this.renderCanvas();
+	};
+	private onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+		const p_1 = getMousePosition(e);
+		this.currentTool.performEnd(this, this.p_0, p_1);
+		this.renderCanvas();
 	};
 
+	/**
+	 * Shapes
+	 */
+	public addShape (p_0: Position, p_1: Position) {
+		this.objects.addObject(p_0, p_1);
+	}
+
+	createSelection = (position: Position) => {
+		this.objects.createSelectionObject(position);
+	}
+	updateSelection = (settings: BoardObjectConfig) => {
+		this.objects.updateSelection(settings);
+	}
+	removeSelection= () => {
+		this.objects.removeSelectionObject();
+	}
+
 	private renderCanvas = () => {
-		const objects = this.objects.getAllObjects();
+		const objects = this.objects.allObjects;
 		this.clear();
 		// fills
 		objects.forEach(obj => {
@@ -68,7 +97,7 @@ export default class Board extends React.Component {
 	}
 
 	private clear() {
-		const container = document.querySelector('body');
+		const container = document.querySelector('body')!;
 		this.ctx.clearRect(0, 0, container.clientWidth, container.clientHeight);
 	}
 
@@ -77,27 +106,20 @@ export default class Board extends React.Component {
 	};
 
 	public undo = () => {
-		this.history.undo();
-		this.objects = this.history.currentState.objects;
+		this.objects.undo();
 		this.renderCanvas();
 	}
 	public redo = () => {
-		this.history.redo();
-		this.objects = this.history.currentState.objects;
+		this.objects.redo();
 		this.renderCanvas();
 	}
-	public save = () => {
-		this.history.add(this.objects);
-	}
 
-	public get getCanUndo() { return this.history?.hasLast() }
-	public get getCanRedo() { return this.history?.hasNext() }
-	public get isDirty() { return true }
+	public get getCanUndo() { return this.objects.canUndo() }
+	public get getCanRedo() { return this.objects.canRedo() }
 
 	makeControls = () => [
 			{ name: 'undo', label: 'undo', action: this.undo, disabled: !this.getCanUndo },
 			{ name: 'redo', label: 'redo', action: this.redo, disabled: !this.getCanRedo },
-			{ name: 'save', label: 'save', action: this.save, disabled: !this.isDirty },
 	];
 
 	getMouseListeners() { 
@@ -110,7 +132,7 @@ export default class Board extends React.Component {
 
 	render() {
 		return (
-			<div className='board-container'>``
+			<div className='board-container'>
 				<canvas
 				{...this.getMouseListeners()}
 				ref={(el: HTMLCanvasElement) => this.canvas = el}
