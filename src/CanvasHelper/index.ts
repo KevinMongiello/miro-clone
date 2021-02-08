@@ -1,13 +1,16 @@
+import { Camera } from "../Camera";
 import { Objects } from "../Objects/Objects";
 
 export default class CanvasHelper {
 	private canvas: HTMLCanvasElement;
+	private camera: Camera;
 	private ctx: CanvasRenderingContext2D;
 	private objects: Objects;
 	private requestId: number | null = null;
 
-	constructor(canvas: HTMLCanvasElement, objects: Objects) {
+	constructor(canvas: HTMLCanvasElement, camera: Camera, objects: Objects) {
 		this.canvas = canvas;
+		this.camera = camera;
 		this.ctx = this.canvas.getContext('2d')!;;
 		this.objects = objects;
 	} 
@@ -24,16 +27,22 @@ export default class CanvasHelper {
 	public render = () => {
 		const objects = this.objects.allObjects;
 		this.clear();
-		// fills
+
+		const camera_x = this.camera.x;
+		const camera_y = this.camera.y;
+
 		objects.forEach(obj => {
 			this.ctx.fillStyle = obj.fillStyle;
-			this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
-		});
-		// strokes
-		objects.forEach(obj => {
+			const object_x_local = obj.x - camera_x
+			const object_y_local = obj.y - camera_y
+			
+			// fills
+			this.ctx.fillRect(object_x_local, object_y_local, obj.width, obj.height);
+
+			// strokes
 			if (obj.stroke) {
 				this.ctx.strokeStyle = obj.strokeStyle;
-				this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+				this.ctx.strokeRect(object_x_local, object_y_local, obj.width, obj.height);
 			}
 		});
 	}

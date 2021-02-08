@@ -3,10 +3,11 @@ import { Position } from '../common/types';
 import { BoardObjectConfigUpdate } from '../Objects/Object.model';
 import { Objects } from '../Objects/Objects';
 import { isRightMouseClick } from '../common/isRightMouseClick';
-import { SelectionTool, ShapeTool, Tool } from '../Tools';
+import { PanTool, SelectionTool, ShapeTool, Tool } from '../Tools';
 import { BoardProps, ControlModel } from './Board.model';
 import './Board.scss';
 import CanvasHelper from '../CanvasHelper';
+import { Camera } from '../Camera';
 
 const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => [e.clientX, e.clientY];
 
@@ -18,6 +19,7 @@ export default class Board extends React.Component {
 	private p_0: Position;
 	private currentTool: Tool;
 	private controls: ControlModel[];
+	public camera: Camera;
 	
 	/**
 	 * Initialization
@@ -26,11 +28,12 @@ export default class Board extends React.Component {
 		super(props);
 		this.controls = this.makeControls();
 		this.objects = new Objects();
+		this.camera = new Camera();
 	}
 	
 	componentDidMount() {
 		this.setTool(tools[0]);
-		this.canvasHelper = new CanvasHelper(this.canvas, this.objects);
+		this.canvasHelper = new CanvasHelper(this.canvas, this.camera, this.objects);
 		this.canvasHelper.mountCanvas();
 		this.canvasHelper.render()
 	}
@@ -129,5 +132,6 @@ export default class Board extends React.Component {
 
 const tools = [
 	new SelectionTool(),
-	new ShapeTool()
+	new ShapeTool(),
+	new PanTool()
 ];

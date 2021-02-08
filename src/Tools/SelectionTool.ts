@@ -17,7 +17,7 @@ export class SelectionTool extends Tool {
 		if (!p_1) {
 			throw Error('Destination position was not supplied');
 		}
-		// TODO: animate
+
 		if (this.engaged) {
 			const [x0, y0] = p_0;
 			const [x1, y1] = p_1;
