@@ -4,6 +4,7 @@ export default class CanvasHelper {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
 	private objects: Objects;
+	private requestId: number | null = null;
 
 	constructor(canvas: HTMLCanvasElement, objects: Objects) {
 		this.canvas = canvas;
@@ -40,5 +41,19 @@ export default class CanvasHelper {
 	public clear() {
 		const container = document.querySelector('body')!;
 		this.ctx.clearRect(0, 0, container.clientWidth, container.clientHeight);
+	}
+
+	public runAnimation = () => {
+		if (this.requestId) {
+			this.requestId = requestAnimationFrame(this.animate);
+			this.clear();
+			this.render();
+		}
+	}
+
+	public animate = () => { this.requestId = requestAnimationFrame(this.runAnimation); }
+	public freeze() {
+		this.requestId = null;
+		this.render();
 	}
 }

@@ -43,17 +43,16 @@ export default class Board extends React.Component {
 			return;
 		this.p_0 = getMousePosition(e);
 		this.currentTool.performStart(this, this.p_0);
-		this.canvasHelper.render();
+		this.canvasHelper.animate();
 	};
 	private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		const p_1 = getMousePosition(e);
 		this.currentTool.performMove(this, this.p_0, p_1);
-		this.canvasHelper.render();
 	};
 	private onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		const p_1 = getMousePosition(e);
 		this.currentTool.performEnd(this, this.p_0, p_1);
-		this.canvasHelper.render();
+		this.canvasHelper.freeze();
 	};
 
 	/**
