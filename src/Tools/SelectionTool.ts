@@ -6,11 +6,12 @@ export class SelectionTool extends Tool {
 		super('selection', 'S');
 	}
 
-	public performStart: PerformStart = (board, p_0) => {
+	public performStart: PerformStart = (board, p_0_local) => {
 		this.engage();
 		// Check whether or not there is an intersection with an object (and / its handle).
 		// if (board.hasIntersection)
-		board.createSelection(p_0);
+		const p_0_global = board.camera.getGlobal(p_0_local);
+		board.createSelection(p_0_global);
 	}
 	
 	public performMove: PerformMove = (board, p_0, p_1) => {

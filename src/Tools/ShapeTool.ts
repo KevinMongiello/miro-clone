@@ -6,9 +6,10 @@ export class ShapeTool extends Tool {
 		super('shape', 'Sh');
 	}
 
-	public performStart: PerformStart = (board, p_0) => {
+	public performStart: PerformStart = (board, p_0_local) => {
 		this.engage();
-		board.createSelection(p_0);
+		const p_0_global = board.camera.getGlobal(p_0_local);
+		board.createSelection(p_0_global);
 	}
 	
 	public performMove: PerformMove = (board, p_0, p_1) => {
@@ -26,7 +27,9 @@ export class ShapeTool extends Tool {
 	
 	public performEnd: PerformEnd = (board, p_0, p_1) => {
 		this.disengage();
-		board.addShape(p_0, p_1);
+		const p_0_global = board.camera.getGlobal(p_0);
+		const p_1_global = board.camera.getGlobal(p_1);
+		board.addShape(p_0_global, p_1_global);
 		board.removeSelection();
 	}
 }

@@ -31,7 +31,7 @@ export class ObjectsHistory {
 	
 	public redo(): ObjectsState {
 		if (this.hasNext()) {
-			this.idx--;
+			this.idx++;
 		} else {
 			console.error('Unable to "redo".');
 		}

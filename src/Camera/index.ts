@@ -30,4 +30,11 @@ export class Camera {
 
 	public get x() { return this.x_center - window.innerWidth / 2; }
 	public get y() { return this.y_center - window.innerHeight / 2; }
+
+	public getGlobal(pos: Position): Position {
+		return [
+			this.x + pos[0],
+			this.y + pos[1]
+		];
+	}
 }
