@@ -11,12 +11,12 @@ export class ObjectsHistory {
 	}
 
 	public save(objects: BoardObject[]): ObjectsState {
-		this.idx++;
 		if (this.hasNext()) {
 			// truncate the list and remove undone states
-			this.history = this.history.slice(0, this.idx);
+			this.history = this.history.slice(0, this.idx + 1);
 		}
 		this.history.push(new ObjectsState(objects));
+		this.idx++;
 		return this.currentState;
 	}
 	
@@ -31,7 +31,7 @@ export class ObjectsHistory {
 	
 	public redo(): ObjectsState {
 		if (this.hasNext()) {
-			this.idx++;
+			this.idx--;
 		} else {
 			console.error('Unable to "redo".');
 		}

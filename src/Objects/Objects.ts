@@ -96,8 +96,8 @@ export class Objects {
 	/**
 	 * History methods
 	 */
-	public undo() { this.state = this.history.undo(); }
-	public redo() { this.state = this.history.redo(); }
+	public undo() { this.state = this.history.undo() || this.state; }
+	public redo() { this.state = this.history.redo() || this.state; }
 	public canUndo() { return this.history.hasLast(); }
 	public canRedo() { return this.history.hasNext(); }
 }

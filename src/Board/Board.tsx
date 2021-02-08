@@ -6,12 +6,14 @@ import { isRightMouseClick } from '../common/isRightMouseClick';
 import { SelectionTool, ShapeTool, Tool } from '../Tools';
 import { BoardProps, ControlModel } from './Board.model';
 import './Board.scss';
+import CanvasHelper from '../CanvasHelper';
 
 const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => [e.clientX, e.clientY];
 
 export default class Board extends React.Component {
 	public ctx: CanvasRenderingContext2D;
 	public canvas: HTMLCanvasElement;
+	private canvasHelper: CanvasHelper;
 	private objects: Objects;
 	private p_0: Position;
 	private currentTool: Tool;
@@ -23,24 +25,14 @@ export default class Board extends React.Component {
 	constructor(props: BoardProps) {
 		super(props);
 		this.controls = this.makeControls();
-		console.log('constructing Objects');
 		this.objects = new Objects();
 	}
 	
 	componentDidMount() {
-		this.mountCanvas();
 		this.setTool(tools[0]);
-		this.ctx = this.canvas.getContext('2d')!;
-		this.renderCanvas();
-	}
-
-	private mountCanvas() {
-		const container = document.querySelector('body');
-		if (!container) {
-			throw Error('The container might not have been mounted in time.')
-		}
-		this.canvas.width = container.clientWidth || 0;
-		this.canvas.height = container.clientHeight || 0;
+		this.canvasHelper = new CanvasHelper(this.canvas, this.objects);
+		this.canvasHelper.mountCanvas();
+		this.canvasHelper.render()
 	}
 
 	/**
@@ -51,17 +43,17 @@ export default class Board extends React.Component {
 			return;
 		this.p_0 = getMousePosition(e);
 		this.currentTool.performStart(this, this.p_0);
-		this.renderCanvas();
+		this.canvasHelper.render();
 	};
 	private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		const p_1 = getMousePosition(e);
 		this.currentTool.performMove(this, this.p_0, p_1);
-		this.renderCanvas();
+		this.canvasHelper.render();
 	};
 	private onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		const p_1 = getMousePosition(e);
 		this.currentTool.performEnd(this, this.p_0, p_1);
-		this.renderCanvas();
+		this.canvasHelper.render();
 	};
 
 	/**
@@ -81,39 +73,17 @@ export default class Board extends React.Component {
 		this.objects.removeSelectionObject();
 	}
 
-	private renderCanvas = () => {
-		const objects = this.objects.allObjects;
-		this.clear();
-		// fills
-		objects.forEach(obj => {
-			this.ctx.fillStyle = obj.fillStyle;
-			this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
-		});
-		// strokes
-		objects.forEach(obj => {
-			if (obj.stroke) {
-				this.ctx.strokeStyle = obj.strokeStyle;
-				this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
-			}
-		});
-	}
-
-	private clear() {
-		const container = document.querySelector('body')!;
-		this.ctx.clearRect(0, 0, container.clientWidth, container.clientHeight);
-	}
-
 	public setTool = (tool: Tool) => {
 		this.currentTool = tool;
 	};
 
 	public undo = () => {
 		this.objects.undo();
-		this.renderCanvas();
+		this.canvasHelper.render();
 	}
 	public redo = () => {
 		this.objects.redo();
-		this.renderCanvas();
+		this.canvasHelper.render();
 	}
 
 	public get getCanUndo() { return this.objects?.canUndo() }
