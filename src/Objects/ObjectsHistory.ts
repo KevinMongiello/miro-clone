@@ -6,40 +6,38 @@ export class ObjectsHistory {
 	private history: ObjectsState[] = [];
 	private idx: number = -1;
 
-	constructor(objects?: BoardObject[]) {
-		if (objects) {
-			this.save(objects);
-		}
+	constructor(objects: BoardObject[] = []) {
+		this.save(objects);
 	}
 
 	public save(objects: BoardObject[]): ObjectsState {
-		if (!objects) {
-			return this.currentState;
-		}
-
+		this.idx++;
 		if (this.hasNext()) {
 			// truncate the list and remove undone states
 			this.history = this.history.slice(0, this.idx);
 		}
 		this.history.push(new ObjectsState(objects));
-		this.idx++;
 		return this.currentState;
 	}
 	
-	public undo() {
+	public undo(): ObjectsState {
 		if (this.hasLast()) {
-			return this.history[--this.idx];
+			this.idx--;
 		} else {
 			console.error('Unable to "undo"');
 		}
+		return this.currentState;
 	}
-	public redo() {
+	
+	public redo(): ObjectsState {
 		if (this.hasNext()) {
-			return this.history[++this.idx];
+			this.idx++;
 		} else {
 			console.error('Unable to "redo".');
 		}
+		return this.currentState;
 	}
+
 	public get currentState(): ObjectsState { return _clonedeep(this.history[this.idx]); }
 	public hasLast() { return this.idx > 0; };
 	public hasNext() { return this.idx < this.history.length - 1; };

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Position } from '../common/types';
-import { BoardObjectConfig } from '../Objects/Object.model';
+import { BoardObjectConfigUpdate } from '../Objects/Object.model';
 import { Objects } from '../Objects/Objects';
-
+import { isRightMouseClick } from '../common/isRightMouseClick';
 import { SelectionTool, ShapeTool, Tool } from '../Tools';
 import { BoardProps, ControlModel } from './Board.model';
 import './Board.scss';
@@ -13,7 +13,7 @@ export default class Board extends React.Component {
 	public ctx: CanvasRenderingContext2D;
 	public canvas: HTMLCanvasElement;
 	private objects: Objects;
-	private p_0: Position | null;
+	private p_0: Position;
 	private currentTool: Tool;
 	private controls: ControlModel[];
 	
@@ -23,6 +23,7 @@ export default class Board extends React.Component {
 	constructor(props: BoardProps) {
 		super(props);
 		this.controls = this.makeControls();
+		console.log('constructing Objects');
 		this.objects = new Objects();
 	}
 	
@@ -45,8 +46,9 @@ export default class Board extends React.Component {
 	/**
 	 * Mouse Mouse Handlers
 	 */
-	
 	private onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+		if (isRightMouseClick(e)) 
+			return;
 		this.p_0 = getMousePosition(e);
 		this.currentTool.performStart(this, this.p_0);
 		this.renderCanvas();
@@ -72,7 +74,7 @@ export default class Board extends React.Component {
 	createSelection = (position: Position) => {
 		this.objects.createSelectionObject(position);
 	}
-	updateSelection = (settings: BoardObjectConfig) => {
+	updateSelection = (settings: BoardObjectConfigUpdate) => {
 		this.objects.updateSelection(settings);
 	}
 	removeSelection= () => {
@@ -114,8 +116,8 @@ export default class Board extends React.Component {
 		this.renderCanvas();
 	}
 
-	public get getCanUndo() { return this.objects.canUndo() }
-	public get getCanRedo() { return this.objects.canRedo() }
+	public get getCanUndo() { return this.objects?.canUndo() }
+	public get getCanRedo() { return this.objects?.canRedo() }
 
 	makeControls = () => [
 			{ name: 'undo', label: 'undo', action: this.undo, disabled: !this.getCanUndo },

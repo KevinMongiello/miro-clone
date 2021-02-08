@@ -6,11 +6,12 @@ import { ObjectsState } from './ObjectsState';
 
 export class Objects {
 	private state: ObjectsState;
-	private history: ObjectsHistory = new ObjectsHistory();
+	private history: ObjectsHistory;
 
 	constructor(objects = []) {
 		Object.assign(this, objects);
-		this.save(objects);
+		this.history = new ObjectsHistory(objects);
+		this.state = this.history.currentState;
 	}
 	
 	/**
@@ -33,13 +34,13 @@ export class Objects {
 
 	public addObject(pos: Position, size: Size, options?: BoardObjectConfig): void {
 		this.save([
-			...this.userObjects,
+			...this.state.userObjects,
 			this.createObject(pos, size, options)
 		]);
 	}
 
 	getObject(id: string): BoardObject | undefined {
-		return this.userObjects.find(obj => obj.id = id);
+		return this.state.userObjects.find(obj => obj.id = id);
 	}
 
 	// Perhaps a premature optimization, but i think it will be much faster
@@ -68,9 +69,9 @@ export class Objects {
 	public get selectionObject (): BoardObject | null { return this.state.selectionObject; }
 	public get allObjects(): BoardObject[] {
 		return [
-			...this.userObjects,
-			...this.gridObjects,
-			this.selectionObject
+			...this.state.userObjects,
+			...this.state.gridObjects,
+			this.state.selectionObject
 		].filter(Boolean) as BoardObject[]
 	}
 
@@ -88,13 +89,15 @@ export class Objects {
 	public updateSelection(settings: BoardObjectConfigUpdate) {
 		Object.assign(this.selectionObject, settings);
 	}
-	public removeSelectionObject() { this.state.selectionObject = null; }
+	public removeSelectionObject() {
+		this.state.selectionObject = null;
+	}
 
 	/**
 	 * History methods
 	 */
-	public undo() { this.history.undo(); }
-	public redo() { this.history.redo(); }
+	public undo() { this.state = this.history.undo(); }
+	public redo() { this.state = this.history.redo(); }
 	public canUndo() { return this.history.hasLast(); }
 	public canRedo() { return this.history.hasNext(); }
 }

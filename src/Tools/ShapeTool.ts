@@ -1,19 +1,17 @@
-import { Position } from '../common/types';
-import { Objects } from '../Objects/Objects';
 import { Tool } from './Tool';
-import { Perform } from "./Tool.model";
+import { PerformEnd, PerformMove, PerformStart } from './Tool.model';
 
 export class ShapeTool extends Tool {
 	constructor() {
 		super('shape', 'Sh');
 	}
 
-	public performStart: Perform = (board, p_0, p_1) => {
+	public performStart: PerformStart = (board, p_0) => {
 		this.engage();
 		board.createSelection(p_0);
 	}
 	
-	public performMove: Perform = (board, p_0, p_1) => {
+	public performMove: PerformMove = (board, p_0, p_1) => {
 		if (!p_1) {
 			throw Error('Destination position was not supplied');
 		}
@@ -26,7 +24,7 @@ export class ShapeTool extends Tool {
 		}
 	}
 	
-	public performEnd: Perform = (board, p_0, p_1) => {
+	public performEnd: PerformEnd = (board, p_0, p_1) => {
 		this.disengage();
 		board.addShape(p_0, p_1);
 		board.removeSelection();

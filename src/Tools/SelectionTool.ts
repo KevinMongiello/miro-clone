@@ -1,19 +1,19 @@
 import { Tool } from "./Tool";
-import { Perform } from "./Tool.model";
+import { PerformEnd, PerformMove, PerformStart } from "./Tool.model";
 
 export class SelectionTool extends Tool {
 	constructor() {
-		super('selection', 'S', false);
+		super('selection', 'S');
 	}
 
-	public performStart: Perform = (board, p_0) => {
+	public performStart: PerformStart = (board, p_0) => {
 		this.engage();
 		// Check whether or not there is an intersection with an object (and / its handle).
 		// if (board.hasIntersection)
 		board.createSelection(p_0);
 	}
 	
-	public performMove: Perform = (board, p_0, p_1) => {
+	public performMove: PerformMove = (board, p_0, p_1) => {
 		if (!p_1) {
 			throw Error('Destination position was not supplied');
 		}
@@ -27,7 +27,7 @@ export class SelectionTool extends Tool {
 		}
 	}
 	
-	public performEnd: Perform = (board) => {
+	public performEnd: PerformEnd = (board) => {
 		this.disengage();
 		board.removeSelection();
 	}

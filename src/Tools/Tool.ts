@@ -1,4 +1,4 @@
-import { Perform } from "./Tool.model";
+import { PerformEnd, PerformMove, PerformStart } from "./Tool.model";
 
 export abstract class Tool {
 	protected engaged: boolean = false;
@@ -13,7 +13,7 @@ export abstract class Tool {
 	protected engage() { this.engaged = true; }
 	protected disengage() { this.engaged = false; }
 
-	public abstract performStart: Perform;
-	public abstract performMove: Perform;
-	public abstract performEnd: Perform;
+	public abstract performStart: PerformStart;
+	public abstract performMove: PerformMove;
+	public abstract performEnd: PerformEnd;
 }
