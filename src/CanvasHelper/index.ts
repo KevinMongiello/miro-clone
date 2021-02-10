@@ -6,7 +6,7 @@ export default class CanvasHelper {
 	private camera: Camera;
 	private ctx: CanvasRenderingContext2D;
 	private objects: Objects;
-	private requestId: number | null = null;
+	private requestId: number = 0;
 
 	constructor(canvas: HTMLCanvasElement, camera: Camera, objects: Objects) {
 		this.canvas = canvas;
@@ -32,7 +32,7 @@ export default class CanvasHelper {
 		const camera_y = this.camera.y;
 
 		objects.forEach(obj => {
-			this.ctx.fillStyle = obj.fillStyle;
+			this.ctx.fillStyle = obj.getFillStyle()!;
 			const object_x_local = obj.x - camera_x
 			const object_y_local = obj.y - camera_y
 			
@@ -41,7 +41,7 @@ export default class CanvasHelper {
 
 			// strokes
 			if (obj.stroke) {
-				this.ctx.strokeStyle = obj.strokeStyle;
+				this.ctx.strokeStyle = obj.getStrokeStyle()!;
 				this.ctx.strokeRect(object_x_local, object_y_local, obj.width, obj.height);
 			}
 		});
@@ -62,7 +62,7 @@ export default class CanvasHelper {
 
 	public animate = () => { this.requestId = requestAnimationFrame(this.runAnimation); }
 	public freeze() {
-		this.requestId = null;
+		cancelAnimationFrame(this.requestId);
 		this.render();
 	}
 }

@@ -1,15 +1,17 @@
+import { Position } from "../common/types";
 import { Tool } from "./Tool";
 import { PerformEnd, PerformMove, PerformStart } from "./Tool.model";
 
 export class SelectionTool extends Tool {
+	private isDragging: boolean = false;
+
 	constructor() {
-		super('selection', 'S');
+		super('selection', 'Sel');
 	}
 
 	public performStart: PerformStart = (board, p_0_local) => {
 		this.engage();
-		// Check whether or not there is an intersection with an object (and / its handle).
-		// if (board.hasIntersection)
+		
 		const p_0_global = board.camera.getGlobal(p_0_local);
 		board.createSelection(p_0_global);
 	}
@@ -27,9 +29,21 @@ export class SelectionTool extends Tool {
 			board.updateSelection({ width, height });
 		}
 	}
+
+	private isSelection(p_0: Position, p_1: Position) {
+		return Math.max(
+			Math.abs(p_1[0] - p_0[0]),
+			Math.abs(p_1[1] - p_0[1])
+		) > 3
+	}
 	
-	public performEnd: PerformEnd = (board) => {
+	public performEnd: PerformEnd = (board, p_0, p_1) => {
 		this.disengage();
 		board.removeSelection();
+		if (this.isSelection(p_0, p_1)) {
+			board.select(p_0, p_1);
+		} else {
+			board.click(p_1)
+		}
 	}
 }

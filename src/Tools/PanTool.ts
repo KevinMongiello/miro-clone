@@ -4,7 +4,7 @@ import { PerformEnd, PerformMove, PerformStart } from "./Tool.model";
 
 export class PanTool extends Tool {
 	constructor() {
-		super('pan', 'P');
+		super('pan', 'Pan');
 	}
 
 	public performStart: PerformStart = () => {

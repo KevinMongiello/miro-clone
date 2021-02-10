@@ -5,10 +5,11 @@ export interface BoardObjectConfig {
 	height: number;
 	rotation: number;
 	scale: number;
-	locked: boolean;
 	fillStyle?: string;
 	stroke?: number;
 	strokeStyle?: string;
+	locked: boolean;
+	selected: boolean;
 }
 
 export type BoardObjectConfigUpdate = Partial<BoardObjectConfig>;
