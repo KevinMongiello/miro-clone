@@ -64,14 +64,14 @@ export class BoardObject {
 	get ymax() { return this.y + this.height; }
 
 	public isWithin(p_0: Position, p_1: Position) {
-		const [top, right, bottom, left] = getBoxEdges(p_0, p_1)
-		return left < this.x  &&
-			top < this.y &&
-			right > this.xmax &&
-			bottom > this.ymax;
+		const [x0, y0, x1, y1] = standardCoords(p_0, p_1)
+		return x0 < this.x  &&
+			y0 < this.y &&
+			x1 > this.xmax &&
+			y1 > this.ymax;
 	}
 
-	public intersects(p_0: Position, p_1: Position) {
+	public cointainsPoints(p_0: Position, p_1: Position) {
 		const verticies: Position[] = [
 			p_0,
 			[p_1[0], p_0[1]],
@@ -81,12 +81,35 @@ export class BoardObject {
 
 		return verticies.some(vertex => this.containsPoint(vertex));
 	}
+
+	public intersects(p_0: Position, p_1: Position) {
+		const [left, top, right, bottom] = standardCoords(p_0, p_1);
+		const isWider = left < this.x && right > this.xmax;
+		const isLonger = top < this.y && bottom > this.ymax;
+		return(
+			isWider && (
+				(top > this.y && top < this.ymax) ||
+				(bottom > this.y && bottom < this.ymax)
+			) ||
+			isLonger && (
+				(left > this.x && left < this.xmax) ||
+				(right > this.x && right < this.xmax)
+			)
+		);
+	}
+
+	public trySelect(p_0: Position, p_1: Position) {
+		this.selected = 
+			this.cointainsPoints(p_0, p_1) ||
+			this.isWithin(p_0, p_1) ||
+			this.intersects(p_0, p_1);
+	}
 }
 
-// returns [top, right, bottom, left] like a clock.
-const getBoxEdges = (p_0: Position, p_1: Position): [number, number, number, number] => ([
+// returns [x0, y0, x1, y1] where p0 is top-left vertex and p1 is bottom-right.
+const standardCoords = (p_0: Position, p_1: Position): [number, number, number, number] => ([
+	Math.min(p_0[0], p_1[0]),
 	Math.min(p_0[1], p_1[1]),
 	Math.max(p_0[0], p_1[0]),
-	Math.max(p_0[1], p_1[1]),
-	Math.min(p_0[0], p_1[0])
+	Math.max(p_0[1], p_1[1])
 ]);

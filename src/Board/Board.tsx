@@ -81,8 +81,9 @@ export default class Board extends React.Component {
 	}
 
 	public click(pos: Position) {
+		const globalPos = this.camera.getGlobal(pos);
 		this.objects.userObjects.forEach(ob => {
-			if (ob.containsPoint(pos)) {
+			if (ob.containsPoint(globalPos)) {
 				ob.selected = true;
 			} else {
 				ob.selected = false;
@@ -91,13 +92,13 @@ export default class Board extends React.Component {
 		this.refresh();
 	}
 
+	public getGlobal = (pos: Position) => this.camera.getGlobal(pos);
+
 	public select(p_0: Position, p_1: Position) {
+		const p_0_global = this.getGlobal(p_0);
+		const p_1_global = this.getGlobal(p_1);
 		this.objects.userObjects.forEach(ob => {
-			if (ob.intersects(p_0, p_1) || ob.isWithin(p_0, p_1)) {
-				ob.selected = true;
-			} else {
-				ob.selected = false;
-			}
+			ob.trySelect(p_0_global, p_1_global);
 		})
 	}
 
