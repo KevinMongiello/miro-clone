@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Position, Size } from '../common/types';
+import { Position, Size, Vector2 } from '../common/types';
+import { Vector2Util } from '../utils/vector';
 import { BoardObjectConfig } from './Object.model';
 
 export class BoardObject {
@@ -18,6 +19,9 @@ export class BoardObject {
 	}
 	public x: number;
 	public y: number;
+	// keep track of last position to use in MoveVector when moving to next position
+	private xfrom: number;
+	private yfrom: number;
 	public height: number;
 	public width: number;
 	public color: string;
@@ -34,6 +38,8 @@ export class BoardObject {
 		const [w, h] = size;
 		this.x = x;
 		this.y = y;
+		this.xfrom = x;
+		this.yfrom = y;
 		this.width = w;
 		this.height = h;
 		const options = Object.assign({}, BoardObject.defaultOptions, _options);
@@ -64,7 +70,7 @@ export class BoardObject {
 	get ymax() { return this.y + this.height; }
 
 	public isWithin(p_0: Position, p_1: Position) {
-		const [x0, y0, x1, y1] = standardCoords(p_0, p_1)
+		const [x0, y0, x1, y1] = Vector2Util.standardCoords(p_0, p_1)
 		return x0 < this.x  &&
 			y0 < this.y &&
 			x1 > this.xmax &&
@@ -83,7 +89,7 @@ export class BoardObject {
 	}
 
 	public intersects(p_0: Position, p_1: Position) {
-		const [left, top, right, bottom] = standardCoords(p_0, p_1);
+		const [left, top, right, bottom] = Vector2Util.standardCoords(p_0, p_1);
 		const isWider = left < this.x && right > this.xmax;
 		const isLonger = top < this.y && bottom > this.ymax;
 		return(
@@ -98,18 +104,29 @@ export class BoardObject {
 		);
 	}
 
+	public tryClick(pos: Position) {
+		if (this.containsPoint(pos)) {
+			this.selected = true;
+		} else {
+			this.selected = false;
+		}
+	}
+
 	public trySelect(p_0: Position, p_1: Position) {
 		this.selected = 
 			this.cointainsPoints(p_0, p_1) ||
 			this.isWithin(p_0, p_1) ||
 			this.intersects(p_0, p_1);
 	}
-}
 
-// returns [x0, y0, x1, y1] where p0 is top-left vertex and p1 is bottom-right.
-const standardCoords = (p_0: Position, p_1: Position): [number, number, number, number] => ([
-	Math.min(p_0[0], p_1[0]),
-	Math.min(p_0[1], p_1[1]),
-	Math.max(p_0[0], p_1[0]),
-	Math.max(p_0[1], p_1[1])
-]);
+	public moving(vector: Vector2) {
+		this.x = this.xfrom + vector[0];
+		this.y = this.yfrom + vector[1];
+	}
+
+	public move(vector: Vector2) {
+		this.moving(vector);
+		this.xfrom = this.x;
+		this.yfrom = this.y;
+	}
+}

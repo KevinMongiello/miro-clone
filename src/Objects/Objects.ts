@@ -1,4 +1,5 @@
-import { Position, Size } from "../common/types";
+import { Position, Size, Vector2 } from "../common/types";
+import { Vector2Util } from "../utils/vector";
 import { BoardObject } from "./Object";
 import { BoardObjectConfig, BoardObjectConfigUpdate } from './Object.model'
 import { ObjectsHistory } from './ObjectsHistory';
@@ -32,10 +33,11 @@ export class Objects {
 		return new BoardObject(p_0, size, options);
 	}
 
-	public addObject(pos: Position, size: Size, options?: BoardObjectConfig): void {
+	public addObject(p_0: Position, p_1: Position, options?: BoardObjectConfig): void {
+		const [p_tl, p_br] = Vector2Util.tlbr(p_0, p_1);
 		this.save([
 			...this.state.userObjects,
-			this.createObject(pos, size, options)
+			this.createObject(p_tl, p_br, options)
 		]);
 	}
 
@@ -91,6 +93,18 @@ export class Objects {
 	}
 	public removeSelectionObject() {
 		this.state.selectionObject = null;
+	}
+
+	public moving(objects: BoardObject[], vector: Vector2) {
+		objects.forEach(ob => {
+			ob.moving(vector);
+		});
+	}
+	public move(objects: BoardObject[], vector: Vector2) {
+		objects.forEach(ob => {
+			ob.move(vector);
+		});
+		this.save();
 	}
 
 	/**
