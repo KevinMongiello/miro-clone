@@ -77,7 +77,7 @@ export class BoardObject {
 			y1 > this.ymax;
 	}
 
-	public cointainsPoints(p_0: Position, p_1: Position) {
+	public containsPoints(p_0: Position, p_1: Position) {
 		const verticies: Position[] = [
 			p_0,
 			[p_1[0], p_0[1]],
@@ -114,8 +114,8 @@ export class BoardObject {
 
 	public trySelect(p_0: Position, p_1: Position) {
 		this.selected = 
-			this.cointainsPoints(p_0, p_1) ||
-			this.isWithin(p_0, p_1) ||
+			this.containsPoints(p_0, p_1) ||
+			this.isWithin(p_0, p_1);
 			this.intersects(p_0, p_1);
 	}
 

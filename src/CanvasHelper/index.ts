@@ -25,6 +25,8 @@ export default class CanvasHelper {
 	}
 	
 	public render = () => {
+		// might be costly to render every frame.  Can possibly be cached...
+		// const objects = this.objects.getVisible(this.camera.bounds);
 		const objects = this.objects.allObjects;
 
 		this.clear();
@@ -49,14 +51,19 @@ export default class CanvasHelper {
 	get width () { return this.canvas.width; }
 
 	drawViewer() {
+		const objects = this.objects.getVisible(this.camera.bounds);
 		this.ctx.fillStyle = 'black';
 		this.ctx.font = "20px Georgia";
 		const zoom = `Zoom: ${this.camera.zoom}`
 		const xCenter = `X (Center): ${this.camera.x_center}`
 		const yCenter = `Y (Center): ${this.camera.y_center}`
-		this.ctx.fillText(zoom, this.width - 200, this.height - 100);
-		this.ctx.fillText(xCenter, this.width - 200, this.height - 80);
-		this.ctx.fillText(yCenter, this.width - 200, this.height - 60);
+		const objs = `Visible Objects: ${objects.length}`
+		const x = this.width - 200;
+		const y = this.height - 100;
+		this.ctx.fillText(zoom, x, y);
+		this.ctx.fillText(xCenter, x, y + 20);
+		this.ctx.fillText(yCenter, x, y + 40);
+		this.ctx.fillText(objs, x, y + 60);
 	}
 
 	public clear() {

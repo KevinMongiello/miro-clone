@@ -32,9 +32,7 @@ export class Camera {
 		this.zoom = Math.max(this.zoom + coeff * zoom, 0.1);
 	}
 
-	public get x() { return this.x_center - window.innerWidth / (2 * this.zoom); }
-	public get y() { return this.y_center - window.innerHeight / (2 * this.zoom); }
-
+	
 	public toGlobalPosition(pos: Position): Position {
 		return [
 			this.x + pos[0] / this.zoom,
@@ -54,11 +52,23 @@ export class Camera {
 	public toLocalScale(p: number): number {
 		return p * this.zoom;
 	}
-
+	
 	public toLocalDimensions(dimensions: Size): Size {
 		return [
 			this.toLocalScale(dimensions[0]),
 			this.toLocalScale(dimensions[1])
 		]
+	}
+	
+	public get x() { return this.x_center - this.toGlobalScale(window.innerWidth / 2);  }
+	public get y() { return this.y_center - this.toGlobalScale(window.innerHeight / 2); }
+	private get xmax(): number { return this.x_center + this.toGlobalScale(window.innerWidth / 2); }
+	private get ymax(): number { return this.y_center + this.toGlobalScale(window.innerHeight / 2); }
+
+	public get bounds(): [Position, Position] {
+		return [
+			[this.x, this.y],
+			[this.xmax, this.ymax]
+		];
 	}
 }

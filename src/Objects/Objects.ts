@@ -22,9 +22,6 @@ export class Objects {
 		this.state = this.history.save(objects);
 	 }
 
-	/**
-	 * Modifiers
-	 */
 	private createObject(...args: [Position, Position, BoardObjectConfig?]): BoardObject;
 	private createObject(p_0: Position, p_1: Position, options?: BoardObjectConfig) {
 		const [x0, y0] = p_0;
@@ -40,12 +37,16 @@ export class Objects {
 			this.createObject(p_tl, p_br, options)
 		]);
 	}
-
-	getObject(id: string): BoardObject | undefined {
+	
+	public getObject(id: string): BoardObject | undefined {
 		return this.state.userObjects.find(obj => obj.id = id);
 	}
+	
+	/**
+	 * Modifiers
+	 */
 
-	// Perhaps a premature optimization, but i think it will be much faster
+	// Perhaps a premature optimization, but I think it will be much faster
 	// to mutate an object, say, the selection object while it is resizing, then to
 	// create a new object ever 16ms.
 	// Plus, as of now, creating a new object would make a new copy of ObjectState
@@ -75,6 +76,13 @@ export class Objects {
 			...this.state.gridObjects,
 			this.state.selectionObject
 		].filter(Boolean) as BoardObject[]
+	}
+	public getVisible(bounds: [Position, Position]): BoardObject[] {
+		// TODO: create a tlbr enforcer.
+		// bounds should be in [tl, br] format
+		return this.allObjects.filter(ob => 
+			ob.isWithin(...bounds) || ob.containsPoints(...bounds) || ob.intersects(...bounds)
+		);
 	}
 
 	/**

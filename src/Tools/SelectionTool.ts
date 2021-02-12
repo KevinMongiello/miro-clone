@@ -1,3 +1,4 @@
+import { BoardObject } from "../Objects/Object";
 import { Vector2Util } from "../utils/vector";
 import { Tool } from "./Tool";
 import { PerformEnd, PerformMove, PerformStart } from "./Tool.model";
