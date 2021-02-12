@@ -11,17 +11,20 @@ import { Camera } from '../Camera';
 import cn from 'classnames';
 import { BoardObject } from '../Objects/Object';
 
-const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => [e.clientX, e.clientY];
+
+const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => {
+	return [e.clientX, e.clientY];
+}
 
 export default class Board extends React.Component {
 	public ctx: CanvasRenderingContext2D;
 	public canvas: HTMLCanvasElement;
 	private canvasHelper: CanvasHelper;
 	private objects: Objects;
-	private p_0: Position;
+	private p_0_local: Position;
 	private controls: ControlModel[];
 	public camera: Camera;
-
+	
 	state = {
 		currentTool: tools[0]
 	};
@@ -42,7 +45,7 @@ export default class Board extends React.Component {
 		this.canvasHelper.mountCanvas();
 		this.canvasHelper.render()
 	}
-
+	
 	/**
 	 * Getters
 	 */
@@ -56,25 +59,23 @@ export default class Board extends React.Component {
 
 	private get userObjects () { return this.objects.userObjects; }
 
-	public getGlobal = (pos: Position) => this.camera.getGlobal(pos);
-
 	/**
 	 * Mouse Mouse Handlers
 	 */
 	private onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		if (isRightMouseClick(e)) 
 			return;
-		this.p_0 = getMousePosition(e);
-		this.state.currentTool.performStart(this, this.p_0);
+		this.p_0_local = getMousePosition(e);
+		this.state.currentTool.performStart(this, this.p_0_local);
 		this.canvasHelper.animate();
 	};
 	private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-		const p_1 = getMousePosition(e);
-		this.state.currentTool.performMove(this, this.p_0, p_1);
+		const p_1_local = getMousePosition(e);
+		this.state.currentTool.performMove(this, this.p_0_local, p_1_local);
 	};
 	private onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-		const p_1 = getMousePosition(e);
-		this.state.currentTool.performEnd(this, this.p_0, p_1);
+		const p_1_local = getMousePosition(e);
+		this.state.currentTool.performEnd(this, this.p_0_local, p_1_local);
 		this.canvasHelper.freeze();
 	};
 
@@ -91,7 +92,7 @@ export default class Board extends React.Component {
 		};
 	}
 
-		/**
+	/**
 	 * Scroll Handlers
 	 */
 	private onScroll = (e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -125,16 +126,13 @@ export default class Board extends React.Component {
 	}
 
 	public click(pos: Position) {
-		const globalPos = this.camera.getGlobal(pos);
-		this.userObjects.forEach(ob => ob.tryClick(globalPos));
+		this.userObjects.forEach(ob => ob.tryClick(pos));
 		this.refresh();
 	}
 
 	public select(p_0: Position, p_1: Position) {
-		const p_0_global = this.getGlobal(p_0);
-		const p_1_global = this.getGlobal(p_1);
 		this.userObjects.forEach(ob => {
-			ob.trySelect(p_0_global, p_1_global);
+			ob.trySelect(p_0, p_1);
 		})
 	}
 	

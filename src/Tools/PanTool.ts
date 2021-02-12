@@ -7,21 +7,14 @@ export class PanTool extends Tool {
 		super('pan', 'Pan');
 	}
 
+	/**
+	 * Core
+	 */
 	public performStart: PerformStart = () => {
 		this.engage();
 	}
 
-	getDiff(p_0: Position, p_1: Position): Vector2 {
-		const [x0, y0] = p_0;
-		const [x1, y1] = p_1;
-		return [x1 - x0, y1 - y0];
-	}
-
 	public performMove: PerformMove = (board, p_0, p_1) => {
-		if (!p_1) {
-			throw Error('Destination position was not supplied');
-		}
-		
 		if (this.engaged) {
 			board.camera.moving(this.getDiff(p_0, p_1));
 		}
@@ -30,5 +23,14 @@ export class PanTool extends Tool {
 	public performEnd: PerformEnd = (board, p_0, p_1) => {
 		board.camera.move(this.getDiff(p_0, p_1));
 		this.disengage();
+	}
+
+	/**
+	 * Helpers
+	 */
+	getDiff(p_0: Position, p_1: Position): Vector2 {
+		const [x0, y0] = p_0;
+		const [x1, y1] = p_1;
+		return [x1 - x0, y1 - y0];
 	}
 }

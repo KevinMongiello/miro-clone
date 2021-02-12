@@ -26,26 +26,19 @@ export default class CanvasHelper {
 	
 	public render = () => {
 		const objects = this.objects.allObjects;
+
 		this.clear();
 
-		const camera_x = this.camera.x;
-		const camera_y = this.camera.y;
-		const zoom = this.camera.zoom;
-
 		objects.forEach(obj => {
-			this.ctx.fillStyle = obj.getFillStyle()!;
-			// Distance from Camera xy is scaled Proportional to zoom
-			const object_x_local = (obj.x - camera_x) * zoom;
-			const object_y_local = (obj.y - camera_y) * zoom;
-			
-			// fills
-			// Object size is scaled Proportional to zoom
-			this.ctx.fillRect(object_x_local, object_y_local, obj.width * zoom, obj.height * zoom);
+			const [obj_x, obj_y] = this.camera.toLocalPosition(obj.position);
+			const [obj_w, obj_h] = this.camera.toLocalDimensions(obj.dimensions);
 
-			// strokes
+			this.ctx.fillStyle = obj.getFillStyle()!;
+			this.ctx.fillRect(obj_x, obj_y, obj_w, obj_h);
+
 			if (obj.stroke) {
 				this.ctx.strokeStyle = obj.getStrokeStyle()!;
-				this.ctx.strokeRect(object_x_local, object_y_local, obj.width * zoom, obj.height * zoom);
+				this.ctx.strokeRect(obj_x, obj_y, obj_w, obj_h);
 			}
 		});
 
@@ -58,12 +51,12 @@ export default class CanvasHelper {
 	drawViewer() {
 		this.ctx.fillStyle = 'black';
 		this.ctx.font = "20px Georgia";
-		const text1 = `Zoom: ${this.camera.zoom}`
-		const text2 = `X (Center): ${this.camera.x_center}`
-		const text3 = `Y (Center): ${this.camera.y_center}`
-		this.ctx.fillText(text1, this.width - 200, this.height - 100);
-		this.ctx.fillText(text2, this.width - 200, this.height - 80);
-		this.ctx.fillText(text3, this.width - 200, this.height - 60);
+		const zoom = `Zoom: ${this.camera.zoom}`
+		const xCenter = `X (Center): ${this.camera.x_center}`
+		const yCenter = `Y (Center): ${this.camera.y_center}`
+		this.ctx.fillText(zoom, this.width - 200, this.height - 100);
+		this.ctx.fillText(xCenter, this.width - 200, this.height - 80);
+		this.ctx.fillText(yCenter, this.width - 200, this.height - 60);
 	}
 
 	public clear() {
@@ -71,6 +64,9 @@ export default class CanvasHelper {
 		this.ctx.clearRect(0, 0, container.clientWidth, container.clientHeight);
 	}
 
+	/**
+	 * Animation
+	 */
 	public runAnimation = () => {
 		if (this.requestId) {
 			this.requestId = requestAnimationFrame(this.animate);

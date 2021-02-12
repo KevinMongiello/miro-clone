@@ -1,6 +1,7 @@
-import { Position, Vector2 } from "../common/types";
+import { Position, Size, Vector2 } from "../common/types";
 
 export class Camera {
+	// Hold onto the original start position, to continuously calculate new position when moving
 	public from: Position;
 	public x_center: number;
 	public y_center: number;
@@ -17,8 +18,8 @@ export class Camera {
 	}
 
 	public moving(vector: Vector2) {
-		this.x_center = this.from[0] - vector[0];
-		this.y_center = this.from[1] - vector[1];
+		this.x_center = this.from[0] - this.toGlobalScale(vector[0]);
+		this.y_center = this.from[1] - this.toGlobalScale(vector[1]);
 	}
 
 	public move(vector: Vector2) {
@@ -34,10 +35,30 @@ export class Camera {
 	public get x() { return this.x_center - window.innerWidth / (2 * this.zoom); }
 	public get y() { return this.y_center - window.innerHeight / (2 * this.zoom); }
 
-	public getGlobal(pos: Position): Position {
+	public toGlobalPosition(pos: Position): Position {
 		return [
 			this.x + pos[0] / this.zoom,
 			this.y + pos[1] / this.zoom
 		];
+	}
+	public toLocalPosition(pos: Position): Position {
+		return [
+			(pos[0] - this.x) * this.zoom,
+			(pos[1] - this.y) * this.zoom
+		];
+	}
+	
+	public toGlobalScale(p: number): number {
+		return p / this.zoom;
+	}
+	public toLocalScale(p: number): number {
+		return p * this.zoom;
+	}
+
+	public toLocalDimensions(dimensions: Size): Size {
+		return [
+			this.toLocalScale(dimensions[0]),
+			this.toLocalScale(dimensions[1])
+		]
 	}
 }

@@ -129,4 +129,12 @@ export class BoardObject {
 		this.xfrom = this.x;
 		this.yfrom = this.y;
 	}
+
+	public get position(): Position {
+		return [this.x, this.y];
+	}
+
+	public get dimensions(): Position {
+		return [this.width, this.height];
+	}
 }
