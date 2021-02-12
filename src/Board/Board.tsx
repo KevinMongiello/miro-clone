@@ -91,6 +91,15 @@ export default class Board extends React.Component {
 		};
 	}
 
+		/**
+	 * Scroll Handlers
+	 */
+	private onScroll = (e: React.WheelEvent<HTMLCanvasElement>) => {
+		const delta = e.deltaY / Math.abs(e.deltaY);
+		this.camera.setZoom(delta);
+		this.refresh();
+	};
+
 	public moving(objects: BoardObject[], vector: Vector2) {
 		this.objects.moving(objects, vector);
 	}
@@ -154,6 +163,7 @@ export default class Board extends React.Component {
 			<div className='board-container'>
 				<canvas
 				{...this.getMouseListeners()}
+				onWheel={this.onScroll}
 				ref={(el: HTMLCanvasElement) => this.canvas = el}
 			/>
 			<div className='controls ui'>

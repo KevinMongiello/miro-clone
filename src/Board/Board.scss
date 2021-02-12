@@ -30,10 +30,10 @@ body {
 .ui {
 	z-index: 1;
 	position: fixed;
-	background: #ffffc6;
 }
 
 .controls {
+	background: #ffffc6;
 	left: 50%;
 	top: 25px;
 	transform: translateX(-50%);
@@ -43,7 +43,15 @@ body {
 }
 
 .tools {
+	background: #ffffc6;
 	left: 25px;
 	top: 50%;
 	transform: translateY(-50%);
+}
+
+.viewer {
+	padding: 0.5rem 1rem;
+	right: 25px;
+	bottom: 100px;
+	border: 1px solid brown;
 }

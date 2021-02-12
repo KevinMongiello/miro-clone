@@ -1,4 +1,4 @@
-import { Position, Size, Vector2 } from "../common/types";
+import { Position, Vector2 } from "../common/types";
 import { Vector2Util } from "../utils/vector";
 import { BoardObject } from "./Object";
 import { BoardObjectConfig, BoardObjectConfigUpdate } from './Object.model'

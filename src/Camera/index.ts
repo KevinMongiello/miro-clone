@@ -1,10 +1,10 @@
 import { Position, Vector2 } from "../common/types";
 
 export class Camera {
-	private from: Position;
-	private x_center: number;
-	private y_center: number;
-	private zoom: number = 1;
+	public from: Position;
+	public x_center: number;
+	public y_center: number;
+	public zoom: number = 1;
 
 	constructor() {
 		this.x_center = window.innerWidth / 2; 
@@ -26,15 +26,18 @@ export class Camera {
 		this.goTo([this.x_center, this.y_center]);
 	}
 
-	public setZoom (zoom: number) { this.zoom = zoom; }
+	public setZoom (zoom: number) {
+		const coeff = 0.1;
+		this.zoom = Math.max(this.zoom + coeff * zoom, 0.1);
+	}
 
-	public get x() { return this.x_center - window.innerWidth / 2; }
-	public get y() { return this.y_center - window.innerHeight / 2; }
+	public get x() { return this.x_center - window.innerWidth / (2 * this.zoom); }
+	public get y() { return this.y_center - window.innerHeight / (2 * this.zoom); }
 
 	public getGlobal(pos: Position): Position {
 		return [
-			this.x + pos[0],
-			this.y + pos[1]
+			this.x + pos[0] / this.zoom,
+			this.y + pos[1] / this.zoom
 		];
 	}
 }

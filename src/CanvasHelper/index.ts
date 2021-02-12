@@ -30,21 +30,40 @@ export default class CanvasHelper {
 
 		const camera_x = this.camera.x;
 		const camera_y = this.camera.y;
+		const zoom = this.camera.zoom;
 
 		objects.forEach(obj => {
 			this.ctx.fillStyle = obj.getFillStyle()!;
-			const object_x_local = obj.x - camera_x
-			const object_y_local = obj.y - camera_y
+			// Distance from Camera xy is scaled Proportional to zoom
+			const object_x_local = (obj.x - camera_x) * zoom;
+			const object_y_local = (obj.y - camera_y) * zoom;
 			
 			// fills
-			this.ctx.fillRect(object_x_local, object_y_local, obj.width, obj.height);
+			// Object size is scaled Proportional to zoom
+			this.ctx.fillRect(object_x_local, object_y_local, obj.width * zoom, obj.height * zoom);
 
 			// strokes
 			if (obj.stroke) {
 				this.ctx.strokeStyle = obj.getStrokeStyle()!;
-				this.ctx.strokeRect(object_x_local, object_y_local, obj.width, obj.height);
+				this.ctx.strokeRect(object_x_local, object_y_local, obj.width * zoom, obj.height * zoom);
 			}
 		});
+
+		this.drawViewer();
+	}
+
+	get height () { return this.canvas.height; }
+	get width () { return this.canvas.width; }
+
+	drawViewer() {
+		this.ctx.fillStyle = 'black';
+		this.ctx.font = "20px Georgia";
+		const text1 = `Zoom: ${this.camera.zoom}`
+		const text2 = `X (Center): ${this.camera.x_center}`
+		const text3 = `Y (Center): ${this.camera.y_center}`
+		this.ctx.fillText(text1, this.width - 200, this.height - 100);
+		this.ctx.fillText(text2, this.width - 200, this.height - 80);
+		this.ctx.fillText(text3, this.width - 200, this.height - 60);
 	}
 
 	public clear() {
