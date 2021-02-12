@@ -1,5 +1,4 @@
 import { Position, Vector2 } from "../common/types";
-import { Vector2Util } from "../utils/vector";
 import { HorizontalLine, VerticalLine } from "./LineObject";
 import { BoardObject } from "./Object";
 import { BoardObjectConfig, BoardObjectConfigUpdate } from './Object.model'
@@ -34,19 +33,18 @@ export class Objects {
 		this.state = this.history.save(objects);
 	 }
 
-	private createObject(...args: [Position, Position, BoardObjectConfig?]): BoardObject;
-	private createObject(p_0: Position, p_1: Position, options?: BoardObjectConfig) {
+	public createObject(...args: [Position, Position, BoardObjectConfig?]): void;
+	public createObject(p_0: Position, p_1: Position, options?: BoardObjectConfig) {
 		const [x0, y0] = p_0;
-		const [x1, y1] = p_1
+		const [x1, y1] = p_1;
 		const size = [x1 - x0, y1 - y0];
-		return new BoardObject(p_0, size, options);
+		this.addObject(new BoardObject(p_0, size, options));
 	}
 
-	public addObject(p_0: Position, p_1: Position, options?: BoardObjectConfig): void {
-		const [p_tl, p_br] = Vector2Util.tlbr(p_0, p_1);
+	public addObject(object: BoardObject): void {
 		this.save([
 			...this.state.userObjects,
-			this.createObject(p_tl, p_br, options)
+			object
 		]);
 	}
 	

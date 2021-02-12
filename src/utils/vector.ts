@@ -4,6 +4,9 @@ export const Vector2Util = {
 	subtract(p1: Vector2, p0: Vector2): Vector2 {
 		return [p1[0] - p0[0], p1[1] - p0[1]];
 	},
+	add(p1: Vector2, p0: Vector2): Vector2 {
+		return [p1[0] + p0[0], p1[1] + p0[1]];
+	},
 	
 	maxDiff(p1: Vector2, p0: Vector2): number {
 		const diff = Vector2Util.subtract(p1, p0);

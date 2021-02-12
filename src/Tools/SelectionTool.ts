@@ -8,7 +8,7 @@ export class SelectionTool extends Tool {
 	private isMoving: boolean = false;
 
 	constructor() {
-		super('selection', 'Sel');
+		super('selection', 'Select');
 	}
 
 	private reset() {

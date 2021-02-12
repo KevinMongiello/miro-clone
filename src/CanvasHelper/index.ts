@@ -4,7 +4,7 @@ import { Objects } from "../Objects/Objects";
 export default class CanvasHelper {
 	private canvas: HTMLCanvasElement;
 	private camera: Camera;
-	private ctx: CanvasRenderingContext2D;
+	public ctx: CanvasRenderingContext2D;
 	private objects: Objects;
 	private requestId: number = 0;
 
@@ -28,20 +28,14 @@ export default class CanvasHelper {
 		// might be costly to render every frame.  Can possibly be cached...
 		// const objects = this.objects.getVisible(this.camera.bounds);
 		const objects = this.objects.allObjects;
-
 		this.clear();
 
 		objects.forEach(obj => {
-			const [obj_x, obj_y] = this.camera.toLocalPosition(obj.position);
-			const [obj_w, obj_h] = this.camera.toLocalDimensions(obj.dimensions);
-
-			this.ctx.fillStyle = obj.getFillStyle()!;
-			this.ctx.fillRect(obj_x, obj_y, obj_w, obj_h);
-
-			if (obj.stroke) {
-				this.ctx.strokeStyle = obj.getStrokeStyle()!;
-				this.ctx.strokeRect(obj_x, obj_y, obj_w, obj_h);
-			}
+			obj.draw(
+				this.ctx,
+				this.camera.toLocalPosition.bind(this.camera),
+				this.camera.toLocalDimensions.bind(this.camera)
+			)
 		});
 
 		this.drawViewer();

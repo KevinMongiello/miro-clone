@@ -3,7 +3,7 @@ import { PerformEnd, PerformMove, PerformStart } from './Tool.model';
 
 export class ShapeTool extends Tool {
 	constructor() {
-		super('shape', 'Sh');
+		super('shape', 'Shape');
 	}
 
 	public performStart: PerformStart = (board, p_0_local) => {

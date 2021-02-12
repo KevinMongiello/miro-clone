@@ -3,7 +3,7 @@ import { Position, Vector2 } from '../common/types';
 import { BoardObjectConfigUpdate } from '../Objects/Object.model';
 import { Objects } from '../Objects/Objects';
 import { isRightMouseClick } from '../common/isRightMouseClick';
-import { PanTool, SelectionTool, ShapeTool, Tool } from '../Tools';
+import { PanTool, SelectionTool, ShapeTool, Tool, DrawTool } from '../Tools';
 import { BoardProps, ControlModel } from './Board.model';
 import './Board.scss';
 import CanvasHelper from '../CanvasHelper';
@@ -19,7 +19,7 @@ const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): P
 export default class Board extends React.Component {
 	public ctx: CanvasRenderingContext2D;
 	public canvas: HTMLCanvasElement;
-	private canvasHelper: CanvasHelper;
+	public canvasHelper: CanvasHelper;
 	private objects: Objects;
 	private p_0_local: Position;
 	private controls: ControlModel[];
@@ -49,8 +49,8 @@ export default class Board extends React.Component {
 	/**
 	 * Getters
 	 */
-	public getObjectAtPos(pos: Position): BoardObject | undefined {
-		return this.userObjects.find(ob => ob.containsPoint(pos));
+	public getObjectAtPos(p_global: Position): BoardObject | undefined {
+		return this.userObjects.find(ob => ob.containsPoint(p_global));
 	}
 
 	public getSelected(): BoardObject[] {
@@ -66,8 +66,8 @@ export default class Board extends React.Component {
 		if (isRightMouseClick(e)) 
 			return;
 		this.p_0_local = getMousePosition(e);
-		this.state.currentTool.performStart(this, this.p_0_local);
 		this.canvasHelper.animate();
+		this.state.currentTool.performStart(this, this.p_0_local);
 	};
 	private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		const p_1_local = getMousePosition(e);
@@ -93,6 +93,13 @@ export default class Board extends React.Component {
 	}
 
 	/**
+	 * Camera Bindings
+	 **/
+	toGlobalPosition(pos: Position) {
+		return this.camera.toGlobalPosition(pos);
+	}
+
+	/**
 	 * Scroll Handlers
 	 */
 	private onScroll = (e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -111,8 +118,12 @@ export default class Board extends React.Component {
 	/**
 	 * Shapes
 	 */
-	public addShape (p_0: Position, p_1: Position) {
-		this.objects.addObject(p_0, p_1);
+	public addShape (p_0_global: Position, p_1_global: Position) {
+		this.objects.createObject(p_0_global, p_1_global);
+	}
+
+	public addObject (object: BoardObject) {
+		this.objects.addObject(object);
 	}
 
 	createSelection = (position: Position) => {
@@ -125,31 +136,31 @@ export default class Board extends React.Component {
 		this.objects.removeSelectionObject();
 	}
 
-	public click(pos: Position) {
-		this.userObjects.forEach(ob => ob.tryClick(pos));
+	public click(p_global: Position) {
+		this.userObjects.forEach(ob => ob.tryClick(p_global));
 		this.refresh();
 	}
 
-	public select(p_0: Position, p_1: Position) {
+	public select(p_0_global: Position, p_1_global: Position) {
 		this.userObjects.forEach(ob => {
-			ob.trySelect(p_0, p_1);
+			ob.trySelect(p_0_global, p_1_global);
 		})
 	}
-	
+
 	/**
 	 * Control Methods
 	 */
 	private refresh() {
 		this.canvasHelper.render();
 	}
-	public setTool = (tool: Tool) => {
+	private setTool = (tool: Tool) => {
 		this.setState({ currentTool: tool });
 	};
-	public undo = () => {
+	private undo = () => {
 		this.objects.undo();
 		this.canvasHelper.render();
 	}
-	public redo = () => {
+	private redo = () => {
 		this.objects.redo();
 		this.canvasHelper.render();
 	}
@@ -190,5 +201,6 @@ export default class Board extends React.Component {
 const tools = [
 	new SelectionTool(),
 	new ShapeTool(),
-	new PanTool()
+	new PanTool(),
+	new DrawTool()
 ];

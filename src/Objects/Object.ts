@@ -57,6 +57,9 @@ export class BoardObject {
 		return this.selected ? 'rgb(68, 5, 90)' : this.strokeStyle;
 	}
 
+	/**
+	 * Spatial Logic
+	 */
 	public containsPoint(pos: Position) {
 		const isLeft = this.x < pos[0];
 		const isRight = this.x + this.width > pos[0];
@@ -65,9 +68,6 @@ export class BoardObject {
 
 		return isLeft && isRight && isTop && isBottom;
 	}
-
-	get xmax() { return this.x + this.width; }
-	get ymax() { return this.y + this.height; }
 
 	public isWithin(p_0: Position, p_1: Position) {
 		const [x0, y0, x1, y1] = Vector2Util.standardCoords(p_0, p_1)
@@ -130,11 +130,25 @@ export class BoardObject {
 		this.yfrom = this.y;
 	}
 
-	public get position(): Position {
-		return [this.x, this.y];
+	public draw (
+		ctx: CanvasRenderingContext2D,
+		reposition: (p: Position) => Position,
+		rescale: (dim: Vector2) => Vector2
+	): void {
+		const [obj_x, obj_y] = reposition(this.position);
+		const [obj_w, obj_h] = rescale(this.dimensions);
+
+		ctx.fillStyle = this.getFillStyle()!;
+		ctx.fillRect(obj_x, obj_y, obj_w, obj_h);
+
+		if (this.stroke) {
+			ctx.strokeStyle = this.getStrokeStyle()!;
+			ctx.strokeRect(obj_x, obj_y, obj_w, obj_h);
+		}
 	}
 
-	public get dimensions(): Position {
-		return [this.width, this.height];
-	}
+	private get xmax(): number { return this.x + this.width; }
+	private get ymax(): number { return this.y + this.height; }
+	public get position(): Position { return [this.x, this.y]; }
+	public get dimensions(): Position { return [this.width, this.height]; }
 }
