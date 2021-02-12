@@ -115,7 +115,7 @@ export class BoardObject {
 	public trySelect(p_0: Position, p_1: Position) {
 		this.selected = 
 			this.containsPoints(p_0, p_1) ||
-			this.isWithin(p_0, p_1);
+			this.isWithin(p_0, p_1) ||
 			this.intersects(p_0, p_1);
 	}
 

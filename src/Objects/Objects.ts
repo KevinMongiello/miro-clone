@@ -1,13 +1,25 @@
 import { Position, Vector2 } from "../common/types";
 import { Vector2Util } from "../utils/vector";
+import { HorizontalLine, VerticalLine } from "./LineObject";
 import { BoardObject } from "./Object";
 import { BoardObjectConfig, BoardObjectConfigUpdate } from './Object.model'
 import { ObjectsHistory } from './ObjectsHistory';
 import { ObjectsState } from './ObjectsState';
 
+// Simulate infinitely long lines
+// there might be a more efficient way by updating the grid lines as the camera moves,
+// but for now this works.
+const INFINITE_LENGTH = 100000;
+const defaultGridObjects = [
+	...Array(1000).fill(true).map((_, idx) => new VerticalLine([-50000 + idx * 100, -50000], INFINITE_LENGTH)),
+	...Array(1000).fill(true).map((_, idx) => new HorizontalLine([-50000, -50000 + idx * 100], INFINITE_LENGTH)),
+];
+
 export class Objects {
 	private state: ObjectsState;
 	private history: ObjectsHistory;
+	private gridObjects: BoardObject[] = defaultGridObjects;
+	private selectionObject: BoardObject | null = null;
 
 	constructor(objects = []) {
 		Object.assign(this, objects);
@@ -68,13 +80,11 @@ export class Objects {
 	 * Getters
 	 */
 	public get userObjects(): BoardObject[] { return this.state.userObjects; }
-	public get gridObjects(): BoardObject[] { return this.state.gridObjects; }
-	public get selectionObject (): BoardObject | null { return this.state.selectionObject; }
 	public get allObjects(): BoardObject[] {
 		return [
+			...this.gridObjects,
 			...this.state.userObjects,
-			...this.state.gridObjects,
-			this.state.selectionObject
+			this.selectionObject
 		].filter(Boolean) as BoardObject[]
 	}
 	public getVisible(bounds: [Position, Position]): BoardObject[] {
@@ -94,13 +104,13 @@ export class Objects {
 			strokeStyle: 'CornflowerBlue',
 			fillStyle: 'rgba(50, 25, 170, 0.035)'
 		}
-		this.state.selectionObject = new BoardObject(pos, [1, 1], options);
+		this.selectionObject = new BoardObject(pos, [1, 1], options);
 	}
 	public updateSelection(settings: BoardObjectConfigUpdate) {
 		Object.assign(this.selectionObject, settings);
 	}
 	public removeSelectionObject() {
-		this.state.selectionObject = null;
+		this.selectionObject = null;
 	}
 
 	public moving(objects: BoardObject[], vector: Vector2) {
