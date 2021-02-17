@@ -38,13 +38,13 @@ export default class CanvasHelper {
 			)
 		});
 
-		this.drawViewer();
+		this.drawInfo();
 	}
 
 	get height () { return this.canvas.height; }
 	get width () { return this.canvas.width; }
 
-	drawViewer() {
+	drawInfo() {
 		const objects = this.objects.getVisible(this.camera.bounds);
 		this.ctx.fillStyle = 'black';
 		this.ctx.font = "20px Georgia";
@@ -52,7 +52,7 @@ export default class CanvasHelper {
 		const xCenter = `X (Center): ${this.camera.x_center}`
 		const yCenter = `Y (Center): ${this.camera.y_center}`
 		const objs = `Visible Objects: ${objects.length}`
-		const x = this.width - 200;
+		const x = this.width - 420;
 		const y = this.height - 100;
 		this.ctx.fillText(zoom, x, y);
 		this.ctx.fillText(xCenter, x, y + 20);

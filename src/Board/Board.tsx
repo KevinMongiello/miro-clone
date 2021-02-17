@@ -5,12 +5,14 @@ import { Objects } from '../Objects/Objects';
 import { isRightMouseClick } from '../common/isRightMouseClick';
 import { PanTool, SelectionTool, ShapeTool, Tool, DrawTool } from '../Tools';
 import { BoardProps, ControlModel } from './Board.model';
-import './Board.scss';
 import CanvasHelper from '../CanvasHelper';
 import { Camera } from '../Camera';
-import cn from 'classnames';
 import { BoardObject } from '../Objects/Object';
+import MiniDisplay from '../MiniDisplay/MiniDisplay';
+import Controls from '../UI/Controls';
+import Tools from '../UI/Tools';
 
+import './Board.scss';
 
 const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => {
 	return [e.clientX, e.clientY];
@@ -20,10 +22,11 @@ export default class Board extends React.Component {
 	public ctx: CanvasRenderingContext2D;
 	public canvas: HTMLCanvasElement;
 	public canvasHelper: CanvasHelper;
-	private objects: Objects;
+	public camera: Camera = new Camera();
+	public objects: Objects = new Objects();
 	private p_0_local: Position;
-	private controls: ControlModel[];
-	public camera: Camera;
+	private controls: ControlModel[] = [];
+	private miniDisplay: MiniDisplay | null;
 	
 	state = {
 		currentTool: tools[0]
@@ -32,18 +35,13 @@ export default class Board extends React.Component {
 	/**
 	 * Initialization
 	 */
-	constructor(props: BoardProps) {
-		super(props);
-		this.controls = this.makeControls();
-		this.objects = new Objects();
-		this.camera = new Camera();
-	}
 	
 	componentDidMount() {
+		this.controls = this.makeControls();
 		this.setTool(tools[0]);
 		this.canvasHelper = new CanvasHelper(this.canvas, this.camera, this.objects);
 		this.canvasHelper.mountCanvas();
-		this.canvasHelper.render()
+		this.freeze();
 	}
 	
 	/**
@@ -76,7 +74,7 @@ export default class Board extends React.Component {
 	private onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		const p_1_local = getMousePosition(e);
 		this.state.currentTool.performEnd(this, this.p_0_local, p_1_local);
-		this.canvasHelper.freeze();
+		this.freeze();
 	};
 
 	makeControls = () => [
@@ -105,7 +103,7 @@ export default class Board extends React.Component {
 	private onScroll = (e: React.WheelEvent<HTMLCanvasElement>) => {
 		const delta = e.deltaY / Math.abs(e.deltaY);
 		this.camera.setZoom(delta);
-		this.refresh();
+		this.freeze();
 	};
 
 	public moving(objects: BoardObject[], vector: Vector2) {
@@ -121,20 +119,13 @@ export default class Board extends React.Component {
 	public addShape (p_0_global: Position, p_1_global: Position) {
 		this.objects.createObject(p_0_global, p_1_global);
 	}
-
 	public addObject (object: BoardObject) {
 		this.objects.addObject(object);
 	}
 
-	createSelection = (position: Position) => {
-		this.objects.createSelectionObject(position);
-	}
-	updateSelection = (settings: BoardObjectConfigUpdate) => {
-		this.objects.updateSelection(settings);
-	}
-	removeSelection= () => {
-		this.objects.removeSelectionObject();
-	}
+	public createSelection = (position: Position) => 								{ this.objects.createSelectionObject(position); }
+	public updateSelection = (settings: BoardObjectConfigUpdate) => { this.objects.updateSelection(settings); }
+	public removeSelection = () => 																	{ this.objects.removeSelectionObject(); }
 
 	public click(p_global: Position) {
 		this.userObjects.forEach(ob => ob.tryClick(p_global));
@@ -150,12 +141,14 @@ export default class Board extends React.Component {
 	/**
 	 * Control Methods
 	 */
-	private refresh() {
+	
+	private refresh()	{
 		this.canvasHelper.render();
 	}
-	private setTool = (tool: Tool) => {
-		this.setState({ currentTool: tool });
-	};
+	private freeze() {
+		this.canvasHelper.freeze();
+		this.miniDisplay?.renderCanvas();
+	}
 	private undo = () => {
 		this.objects.undo();
 		this.canvasHelper.render();
@@ -164,6 +157,7 @@ export default class Board extends React.Component {
 		this.objects.redo();
 		this.canvasHelper.render();
 	}
+	private setTool = (tool: Tool) => { this.setState({ currentTool: tool }); };
 	public get getCanUndo() { return this.objects?.canUndo() }
 	public get getCanRedo() { return this.objects?.canRedo() }
 
@@ -175,24 +169,15 @@ export default class Board extends React.Component {
 				onWheel={this.onScroll}
 				ref={(el: HTMLCanvasElement) => this.canvas = el}
 			/>
-			<div className='controls ui'>
-			{this.controls.map(control => (
-					<div className='button' key={control.name} onClick={control.action}>
-						{control.label}
-					</div>
-				))}
-			</div>
-			<div className='tools ui'>
-				{tools.map(tool => {
-					const selected = tool.name === this.state.currentTool.name;
-					const classNames = cn('button', { selected });
-					return (
-						<div className={classNames} key={tool.name} onClick={() => this.setTool(tool)}>
-							{tool.label}
-						</div>
-					)
-				})}
-			</div>
+			<Controls controls={this.controls} />
+			<Tools tools={tools} current={this.state.currentTool} setTool={this.setTool} />
+			<MiniDisplay
+				width={200}
+				height={130}
+				ref={el => (this.miniDisplay = el)}
+				objects={this.objects}
+				camera={this.camera}
+			/>
 		</div>
 		);
 	}

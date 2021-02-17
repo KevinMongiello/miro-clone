@@ -62,8 +62,10 @@ export class Camera {
 	
 	public get x() { return this.x_center - this.toGlobalScale(window.innerWidth / 2);  }
 	public get y() { return this.y_center - this.toGlobalScale(window.innerHeight / 2); }
-	private get xmax(): number { return this.x_center + this.toGlobalScale(window.innerWidth / 2); }
-	private get ymax(): number { return this.y_center + this.toGlobalScale(window.innerHeight / 2); }
+	public get xmax(): number { return this.x_center + this.toGlobalScale(window.innerWidth / 2); }
+	public get ymax(): number { return this.y_center + this.toGlobalScale(window.innerHeight / 2); }
+	public get width(): number { return this.xmax - this.x; }
+	public get height(): number { return this.ymax - this.y; }
 
 	public get bounds(): [Position, Position] {
 		return [

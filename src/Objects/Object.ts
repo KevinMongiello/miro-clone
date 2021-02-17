@@ -147,8 +147,8 @@ export class BoardObject {
 		}
 	}
 
-	private get xmax(): number { return this.x + this.width; }
-	private get ymax(): number { return this.y + this.height; }
+	public get xmax(): number { return this.x + this.width; }
+	public get ymax(): number { return this.y + this.height; }
 	public get position(): Position { return [this.x, this.y]; }
 	public get dimensions(): Position { return [this.width, this.height]; }
 }
