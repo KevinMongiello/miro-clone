@@ -145,7 +145,7 @@ export default class Board extends React.Component {
 	private refresh()	{
 		this.canvasHelper.render();
 	}
-	private freeze() {
+	public freeze() {
 		this.canvasHelper.freeze();
 		this.miniDisplay?.renderCanvas();
 	}
@@ -158,8 +158,8 @@ export default class Board extends React.Component {
 		this.canvasHelper.render();
 	}
 	private setTool = (tool: Tool) => { this.setState({ currentTool: tool }); };
-	public get getCanUndo() { return this.objects?.canUndo() }
-	public get getCanRedo() { return this.objects?.canRedo() }
+	public get getCanUndo() { return this.objects?.canUndo(); }
+	public get getCanRedo() { return this.objects?.canRedo(); }
 
 	render() {
 		return (
@@ -173,10 +173,11 @@ export default class Board extends React.Component {
 			<Tools tools={tools} current={this.state.currentTool} setTool={this.setTool} />
 			<MiniDisplay
 				width={200}
-				height={130}
+				height={200}
 				ref={el => (this.miniDisplay = el)}
 				objects={this.objects}
 				camera={this.camera}
+				board={this}
 			/>
 		</div>
 		);

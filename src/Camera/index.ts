@@ -14,16 +14,18 @@ export class Camera {
 	}
 
 	public goTo(vector: Vector2) {
+		this.x_center = vector[0];
+		this.y_center = vector[1]
 		this.from = vector;
 	}
 
-	public moving(vector: Vector2) {
-		this.x_center = this.from[0] - this.toGlobalScale(vector[0]);
-		this.y_center = this.from[1] - this.toGlobalScale(vector[1]);
+	public moving = (vector: Vector2, isGlobal = false) => {
+		this.x_center = this.from[0] - (isGlobal ? vector[0] : this.toGlobalScale(vector[0]));
+		this.y_center = this.from[1] - (isGlobal ? vector[1] : this.toGlobalScale(vector[1]));
 	}
 
-	public move(vector: Vector2) {
-		this.moving(vector);
+	public move = (vector: Vector2, isGlobal = false) => {
+		this.moving(vector, isGlobal);
 		this.goTo([this.x_center, this.y_center]);
 	}
 
