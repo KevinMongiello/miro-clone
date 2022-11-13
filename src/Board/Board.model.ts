@@ -1,3 +1,5 @@
+import { SubscribeKeys } from "../KeyboardListener/KeyboardListener";
+
 export interface ControlModel {
 	name: string;
 	label: string;
@@ -6,5 +8,5 @@ export interface ControlModel {
 }
 
 export interface BoardProps {
-	
+	subscribeKeys: SubscribeKeys;
 }

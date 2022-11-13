@@ -18,7 +18,7 @@ const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): P
 	return [e.clientX, e.clientY];
 }
 
-export default class Board extends React.Component {
+export default class Board extends React.Component<BoardProps> {
 	public ctx: CanvasRenderingContext2D;
 	public canvas: HTMLCanvasElement;
 	public canvasHelper: CanvasHelper;
@@ -27,6 +27,8 @@ export default class Board extends React.Component {
 	private p_0_local: Position;
 	private controls: ControlModel[] = [];
 	private miniDisplay: MiniDisplay | null;
+	private unregisterSpace: () => void;
+	private lastTool: Tool | null = null;
 	
 	state = {
 		currentTool: tools[0]
@@ -42,6 +44,28 @@ export default class Board extends React.Component {
 		this.canvasHelper = new CanvasHelper(this.canvas, this.camera, this.objects);
 		this.canvasHelper.mountCanvas();
 		this.freeze();
+
+		this.bindSpaceKey();
+	}
+
+	componentWillUnmount() {
+		this.unregisterSpace?.();
+	}
+
+	bindSpaceKey = () => {
+		this.unregisterSpace = this.props.subscribeKeys(['Space'], this.onSpaceDown, this.resetTool)
+	}
+
+	onSpaceDown = () => {
+		this.lastTool = this.state.currentTool;
+		console.log('last tool: ', this.lastTool);
+		this.setState({ currentTool: tools.find(t => t.label === 'Pan') });
+	}
+	
+	resetTool = () => {
+		console.log('resetting to the last used tool: ', this.lastTool);
+		this.setState({ currentTool: this.lastTool });
+		this.lastTool = null;
 	}
 	
 	/**

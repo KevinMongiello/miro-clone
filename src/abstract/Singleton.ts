@@ -1,15 +1,13 @@
 export class Singleton {
-	static instance = null;
+	static instance: null | Singleton = null;
 	static get() {
 		return this.instance;
 	}
 
 	constructor() {
-		// @ts-ignore
-		if (this.constructor.instance) {
-			throw Error(this.constructor.name + ' is a singleton class, and initializiation is only allowed once at startup');
+		if (Singleton.instance) {
+			throw Error(Singleton.name + ' is a singleton class, and initializiation is only allowed once at startup');
 		}
-		// @ts-ignore
-		this.constructor.instance = this;
+		Singleton.instance = this;
 	}
 }

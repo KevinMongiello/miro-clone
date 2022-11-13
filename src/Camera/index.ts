@@ -1,10 +1,21 @@
 import { Position, Size, Vector2 } from "../common/types";
 
 export class Camera {
-	// Hold onto the original start position, to continuously calculate new position when moving
+  /**
+   * The original position of the camera when panning begins.
+   */
 	public from: Position;
+  /**
+   * The x coordinate of the direct center of the camera.
+   */
 	public x_center: number;
+  /**
+   * The y coordinate of the direct center of the camera.
+   */
 	public y_center: number;
+  /**
+   * A scalar determining the zoom/level of magnification applied to the camera.
+   */
 	public zoom: number = 1;
 
 	constructor() {
@@ -14,24 +25,37 @@ export class Camera {
 	}
 
 	public goTo(vector: Vector2) {
+    // Set the camera x,y coordinates to the new position
 		this.x_center = vector[0];
 		this.y_center = vector[1]
+    // Set this.from to be the new position
 		this.from = vector;
 	}
 
+  /**
+   * @function moving
+   * @description Called continuously while panning / using the mini map to set the new camera position
+   */
 	public moving = (vector: Vector2, isGlobal = false) => {
 		this.x_center = this.from[0] - (isGlobal ? vector[0] : this.toGlobalScale(vector[0]));
 		this.y_center = this.from[1] - (isGlobal ? vector[1] : this.toGlobalScale(vector[1]));
 	}
 
+  /**
+   * @function move
+   * @param vector 
+   * @param isGlobal 
+   * @description is used to set the final position when panning is complete.
+   */
 	public move = (vector: Vector2, isGlobal = false) => {
 		this.moving(vector, isGlobal);
 		this.goTo([this.x_center, this.y_center]);
 	}
 
 	public setZoom (zoom: number) {
-		const coeff = 0.1;
-		this.zoom = Math.max(this.zoom + coeff * zoom, 0.1);
+		const coeff = 0.1; // exponentially decay the amount of zoom applied
+    const maxZoom = 0.1; // clamp the max zoom.
+		this.zoom = Math.max(this.zoom + coeff * zoom, maxZoom);
 	}
 
 	
