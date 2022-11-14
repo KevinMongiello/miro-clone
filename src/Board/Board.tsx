@@ -1,16 +1,16 @@
 import React from 'react';
-import { Position, Vector2 } from '../common/types';
-import { BoardObjectConfigUpdate } from '../Objects/Object.model';
-import { Objects } from '../Objects/Objects';
-import { isRightMouseClick } from '../common/isRightMouseClick';
-import { PanTool, SelectionTool, ShapeTool, Tool, DrawTool } from '../Tools';
+import { Camera } from './Camera';
+import { Position, Vector2 } from './common/types';
+import { BoardObjectConfigUpdate } from './Objects/Object.model';
+import { Objects } from './Objects/Objects';
+import { isRightMouseClick } from './common/isRightMouseClick';
+import { PanTool, SelectionTool, ShapeTool, Tool, DrawTool } from './Tools';
 import { BoardProps, ControlModel } from './Board.model';
-import CanvasHelper from '../CanvasHelper';
-import { Camera } from '../Camera';
-import { BoardObject } from '../Objects/Object';
-import MiniDisplay from '../MiniDisplay/MiniDisplay';
-import Controls from '../UI/Controls';
-import Tools from '../UI/Tools';
+import CanvasHelper from './CanvasHelper';
+import { BoardObject } from './Objects/Object';
+import MiniDisplay from './MiniDisplay/MiniDisplay';
+import Controls from './UI/Controls';
+import Tools from './UI/Tools';
 
 import './Board.scss';
 

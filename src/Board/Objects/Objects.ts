@@ -105,6 +105,7 @@ export class Objects {
 		this.selectionObject = new BoardObject(pos, [1, 1], options);
 	}
 	public updateSelection(settings: BoardObjectConfigUpdate) {
+		// @ts-ignore
 		Object.assign(this.selectionObject, settings);
 	}
 	public removeSelectionObject() {
