@@ -11,6 +11,7 @@ import { BoardObject } from './Objects/Object';
 import MiniDisplay from './MiniDisplay/MiniDisplay';
 import Controls from './UI/Controls';
 import Tools from './UI/Tools';
+import { Vector2Util } from './utils/vector';
 
 import './Board.scss';
 
@@ -141,7 +142,8 @@ export default class Board extends React.Component<BoardProps> {
 	 * Shapes
 	 */
 	public addShape (p_0_global: Position, p_1_global: Position) {
-		this.objects.createObject(p_0_global, p_1_global);
+		const ltbr = Vector2Util.ltrb(p_0_global, p_1_global);
+		this.objects.createObject(ltbr[0], ltbr[1]);
 	}
 	public addObject (object: BoardObject) {
 		this.objects.addObject(object);

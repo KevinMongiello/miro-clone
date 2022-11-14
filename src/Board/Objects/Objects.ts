@@ -86,7 +86,7 @@ export class Objects {
 		].filter(Boolean) as BoardObject[]
 	}
 	public getVisible(bounds: [Position, Position]): BoardObject[] {
-		// TODO: create a tlbr enforcer.
+		// TODO: create a tlbr (top,left,bottom,right) enforcer.
 		// bounds should be in [tl, br] format
 		return this.allObjects.filter(ob => 
 			ob.isWithin(...bounds) || ob.containsPoints(...bounds) || ob.intersects(...bounds)
