@@ -12,6 +12,7 @@ import MiniDisplay from './MiniDisplay/MiniDisplay';
 import Controls from './UI/Controls';
 import Tools from './UI/Tools';
 import { Vector2Util } from './utils/vector';
+import { NavLink } from 'react-router-dom';
 
 import './Board.scss';
 
@@ -30,15 +31,15 @@ export default class Board extends React.Component<BoardProps> {
   private miniDisplay: MiniDisplay | null;
   private unregisterSpace: () => void;
   private lastTool: Tool | null = null;
-  
+
   state = {
     currentTool: tools[0]
   };
-  
+
   /**
    * Initialization
    */
-  
+
   componentDidMount() {
     this.controls = this.makeControls();
     this.setTool(tools[0]);
@@ -62,13 +63,13 @@ export default class Board extends React.Component<BoardProps> {
     console.log('last tool: ', this.lastTool);
     this.setState({ currentTool: tools.find(t => t.label === 'Pan') });
   }
-  
+
   resetTool = () => {
     console.log('resetting to the last used tool: ', this.lastTool);
     this.setState({ currentTool: this.lastTool });
     this.lastTool = null;
   }
-  
+
   /**
    * Getters
    */
@@ -86,7 +87,7 @@ export default class Board extends React.Component<BoardProps> {
    * Mouse Mouse Handlers
    */
   private onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    if (isRightMouseClick(e)) 
+    if (isRightMouseClick(e))
       return;
     this.p_0_local = getMousePosition(e);
     this.canvasHelper.animate();
@@ -107,7 +108,7 @@ export default class Board extends React.Component<BoardProps> {
     { name: 'redo', label: 'redo', action: this.redo, disabled: !this.getCanRedo },
   ];
 
-  getMouseListeners() { 
+  getMouseListeners() {
     return {
       onMouseDown: this.onMouseDown,
       onMouseUp: this.onMouseUp,
@@ -167,7 +168,7 @@ export default class Board extends React.Component<BoardProps> {
   /**
    * Control Methods
    */
-  
+
   private refresh()  {
     this.canvasHelper.render();
   }
@@ -190,6 +191,7 @@ export default class Board extends React.Component<BoardProps> {
   render() {
     return (
       <div className='board-container'>
+        <NavLink id="homeLink"to="/">Home</NavLink>
         <canvas
         {...this.getMouseListeners()}
         onWheel={this.onScroll}
