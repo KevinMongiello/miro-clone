@@ -1,13 +1,13 @@
 import { BoardObject } from "./Object";
 
 export interface ObjectsStateModel {
-	userObjects: BoardObject[];
+  userObjects: BoardObject[];
 }
 
 export class ObjectsState implements ObjectsStateModel {
-	public userObjects: BoardObject[];
+  public userObjects: BoardObject[];
 
-	constructor(objects: BoardObject[]) {
-		this.userObjects = objects || [];
-	}
+  constructor(objects: BoardObject[]) {
+    this.userObjects = objects || [];
+  }
 }
