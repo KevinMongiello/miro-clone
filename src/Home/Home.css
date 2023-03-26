@@ -1,0 +1,129 @@
+html{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#home {
+  background-color: rgb(224, 224, 224);
+  width: 100vw;
+  height: 100vh;
+}
+
+.content {
+  border: 1px solid transparent;
+  margin: 0 auto;
+  max-width: 900px;
+  padding-left:1em;
+  padding-right:1em;
+}
+
+#home p {
+  margin: 0;
+  color: #050038;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(204px, 1fr));
+  grid-gap: 20px;
+}
+
+.card {
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width:100%;
+  height: 300px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.preview {
+  height: calc(100% - 54px);
+  border-radius: 10px 10px 0 0;
+}
+
+.footer {
+  height: 54px;
+}
+
+.board-name {
+  padding: 12px 0 0 13px;
+  font-size: 13px;
+}
+
+.board-author {
+  padding-left: 13px;
+  font-size: 11px;
+}
+
+.menu {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+.menu > .fa-ellipsis {
+  font-size: 25px;
+  color:rgb(211, 210, 210);
+}
+
+.menu .szh-menu__item--hover {
+  background-color: rgb(232, 236, 255);
+  color: rgb(69, 91, 237);
+}
+
+.menu-item {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+}
+
+.menu-item > svg {
+  height: 1.125em;
+}
+
+.menu-item > span {
+  margin-left: 0.5em;
+}
+
+a{
+  text-decoration: none;
+}
+
+.card:hover .preview {
+  background-color: rgb(110, 110, 110);
+  transition: 0.4s;
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 100ms;
+}
+
+.card:hover .fade-in {
+  opacity: 1;
+  transition: opacity 350ms;
+}
+
+.new-card {
+  display: flex;
+  flex-direction: column;
+  background: #455bed;
+  color: white;
+}
+
+.new-card::before {
+  content: "+";
+  font-size: 4em;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 50%;
+}
+
+.new-card > span {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 25px;
+}
