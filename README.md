@@ -1,4 +1,4 @@
-# New Project
+# Miro Clone
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
