@@ -1,5 +1,6 @@
 # Done
-- [x]  Migrate to Vite || Webpack
+- [x] Migrate to Vite || Webpack
+- [x] Configure Vite proxy to enable sending cookies (since 'same' origin is required)
 
 # Todo
 - [ ] Auth + DB Integration
@@ -21,3 +22,7 @@
 # Extras
 
 - [ ] Logging via Logrocket or similar
+
+# Notes
+- GET will still send cookies without credentials: 'include'
+- credentials: 'include' is not required if making requests to same-origin (or using proxy)

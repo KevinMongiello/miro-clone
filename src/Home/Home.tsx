@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { redirect, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import BoardCard from './BoardCard/BoardCard';
 import { NewBoardCard } from './NewBoardCard';
 import { fetchUser } from '../api/user';
 
-import './Home.css';
+import './Home.scss';
+import { logout } from '../api/login';
 
 const boards = [
   {
@@ -43,7 +44,7 @@ export const Home = () => {
       console.log('user in useEffect: ', user);
       if (!user) {
         console.log('no user found. redirecting...');
-        return navigate('/signup');
+        return navigate('/login');
       } else {
         setUser(user);
       }
@@ -53,8 +54,23 @@ export const Home = () => {
     fn();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      // notification
+      console.log(err);
+    }
+  };
+
   return (
     <div id="home">
+      <nav>
+        <ul>
+          <li onClick={handleLogout}>Logout</li>
+        </ul>
+      </nav>
       <div className="content">
         {loading ? (
           <h2>Loading...</h2>
@@ -68,7 +84,9 @@ export const Home = () => {
               <BoardCard board={boards[2]} />
             </div>
           </>
-        ) : <p>Redirecting to signup...</p>}
+        ) : (
+          <p>Redirecting to signup...</p>
+        )}
       </div>
     </div>
   );

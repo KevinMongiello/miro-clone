@@ -5,14 +5,14 @@ interface SignupData {
 }
 
 export const signup = (data: SignupData) => {
-  fetch('http://localhost:3000/auth/signup', {
+  return fetch('/api/auth/signup', {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   })
-  .then(res => res.text())
-  .then(console.log)
-  .catch(console.error);
-}
+    .then((res) => res.text())
+    .then(console.log)
+    .catch(console.error);
+};

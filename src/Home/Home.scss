@@ -127,3 +127,18 @@ a{
   text-align: center;
   bottom: 25px;
 }
+
+ul {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+  margin: 0 1rem;
+  padding: 1rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
