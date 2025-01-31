@@ -1,15 +1,7 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "target": "ES2019",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    // "noEmit": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "jsx": "react",
-    "strictPropertyInitialization": false
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }
