@@ -48,10 +48,17 @@ export default class Board extends React.Component<BoardProps> {
     this.freeze();
 
     this.bindSpaceKey();
+
+    this.__expose_objects_to_client__();
   }
 
   componentWillUnmount() {
     this.unregisterSpace?.();
+  }
+
+  __expose_objects_to_client__() {
+    // @ts-ignore
+    window.__mclone_objects__ = this.objects;
   }
 
   bindSpaceKey = () => {
