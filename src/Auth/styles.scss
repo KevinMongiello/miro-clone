@@ -1,0 +1,13 @@
+
+.signup-form {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  max-width: 360px;
+  div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem;
+  }
+}

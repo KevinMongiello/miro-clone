@@ -1,4 +1,4 @@
-import Board from "../Board/Board";
+import Board from "../Board";
 import { Position } from "../common/types";
 
 export type PerformStart = (board: Board, p_0: Position) => void;

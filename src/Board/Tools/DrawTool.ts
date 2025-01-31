@@ -29,6 +29,8 @@ export class DrawTool extends Tool {
     board.canvasHelper.ctx.moveTo(...p_0_local);
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   public performMove: PerformMove = (board, p_0_local, p_1_local) => {
     if (this.engaged) {
       this.data.push(p_1_local)
@@ -36,7 +38,9 @@ export class DrawTool extends Tool {
       board.canvasHelper.ctx.stroke();
     }
   }
-  
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   public performEnd: PerformEnd = (board, p_0, p_1_local) => {
     this.data.push(p_1_local)
     board.canvasHelper.ctx.lineTo(...p_1_local);

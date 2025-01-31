@@ -66,9 +66,10 @@ export class Objects {
 
   // Make a final update which creates a new history state.
   public updateObject(object: string | Object, changes: BoardObjectConfig): void {
-    const obj = typeof object === 'string'
-      ? this.getObject(object) // its an objectId
-      : object;
+    // apparently unused variable
+    // const obj = typeof object === 'string'
+    //   ? this.getObject(object) // its an objectId
+    //   : object;
     
     Object.assign(object, changes);
     this.save();

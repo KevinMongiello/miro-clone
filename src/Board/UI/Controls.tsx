@@ -1,5 +1,4 @@
-import React from 'react';
-import { ControlModel } from '../Board/Board.model';
+import { ControlModel } from '../Board.model';
 
 interface ControlsProps {
   controls: ControlModel[];

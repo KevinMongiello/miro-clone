@@ -1,5 +1,4 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import DropdownComponent  from './Dropdown';
 
 const BoardCard = ({ board }: any) => {

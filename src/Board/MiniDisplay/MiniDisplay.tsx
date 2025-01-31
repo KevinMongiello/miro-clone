@@ -1,5 +1,5 @@
 import React from 'react';
-import Board from '../Board/Board';
+import Board from '../Board';
 import { Camera } from '../Camera';
 import { Position } from '../common/types';
 import { Objects } from '../Objects/Objects';

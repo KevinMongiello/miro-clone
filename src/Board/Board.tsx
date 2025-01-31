@@ -12,7 +12,7 @@ import MiniDisplay from './MiniDisplay/MiniDisplay';
 import Controls from './UI/Controls';
 import Tools from './UI/Tools';
 import { Vector2Util } from './utils/vector';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 
 import './Board.scss';
 
