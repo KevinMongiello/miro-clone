@@ -7,10 +7,28 @@
   display: flex;
   flex-direction: column;
   max-width: 360px;
-  div {
+  .form-element-container {
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     margin: 1rem;
+    .form-element-inner {
+      display: flex;
+      justify-content: space-between;
+    }
+    .error-msg {
+      color: red;
+      margin-bottom: 0.25rem;
+      display: none;
+    }
+    &.error {
+      .error-msg {
+        display: block;
+      }
+      input {
+        outline: 2px solid red;
+      }
+    }
   }
 }
