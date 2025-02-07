@@ -4,18 +4,18 @@ export const fetchBoards = async () => {
     const json = await res.json();
     return json;
   } catch (err) {
-    console.log("Unable to fetch boards");
+    console.log('Unable to fetch boards');
   }
-}
+};
 
 export const createNewBoard = async () => {
   try {
     const res = await fetch('/api/user/board', {
-      method: 'POST'
+      method: 'POST',
     });
     const board = await res.json();
     return board;
   } catch (err) {
-    console.log("Unable to create board.");
+    console.log('Unable to create board.');
   }
-}
+};

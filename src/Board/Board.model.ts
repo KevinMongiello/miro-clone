@@ -1,4 +1,4 @@
-import { SubscribeKeys } from "./KeyboardListener/KeyboardListener";
+import { SubscribeKeys } from './KeyboardListener/KeyboardListener';
 
 export interface ControlModel {
   name: string;

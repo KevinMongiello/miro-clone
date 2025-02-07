@@ -61,7 +61,7 @@ export const Signup = () => {
       const form = {
         name,
         email,
-        password
+        password,
       };
       await signup(form);
       return navigate('/login');

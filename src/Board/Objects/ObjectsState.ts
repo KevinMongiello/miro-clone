@@ -1,4 +1,4 @@
-import { BoardObject } from "./Object";
+import { BoardObject } from './Object';
 
 export interface ObjectsStateModel {
   userObjects: BoardObject[];

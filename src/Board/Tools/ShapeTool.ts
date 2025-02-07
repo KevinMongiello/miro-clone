@@ -8,10 +8,8 @@ export class ShapeTool extends Tool {
 
   public performStart: PerformStart = (board, p_0_local) => {
     this.engage();
-    board.createSelection(
-      board.camera.toGlobalPosition(p_0_local)
-    );
-  }
+    board.createSelection(board.camera.toGlobalPosition(p_0_local));
+  };
 
   public performMove: PerformMove = (board, p_0_local, p_1_local) => {
     if (this.engaged) {
@@ -23,13 +21,13 @@ export class ShapeTool extends Tool {
 
       board.updateSelection({ width, height });
     }
-  }
-  
+  };
+
   public performEnd: PerformEnd = (board, p_0_local, p_1_local) => {
     this.disengage();
     const p_0 = board.camera.toGlobalPosition(p_0_local);
     const p_1 = board.camera.toGlobalPosition(p_1_local);
     board.addShape(p_0, p_1);
     board.removeSelection();
-  }
+  };
 }

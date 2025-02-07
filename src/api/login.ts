@@ -1,4 +1,4 @@
-import { sha256 } from "./crypto";
+import { sha256 } from './crypto';
 
 interface LoginData {
   email: string;
@@ -8,8 +8,8 @@ interface LoginData {
 export const login = async (data: LoginData) => {
   const secureForm = {
     ...data,
-    password: await sha256(data.password)
-  }
+    password: await sha256(data.password),
+  };
   try {
     const res = await fetch('/api/auth/login', {
       method: 'POST',

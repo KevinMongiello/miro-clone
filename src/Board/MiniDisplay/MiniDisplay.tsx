@@ -38,7 +38,7 @@ export default class MiniDisplay extends React.Component<MiniDisplayProps> {
     this.drawObjects();
     this.drawCamera();
   }
-  
+
   clear() {
     this.ctx.fillStyle = 'white';
     this.ctx.fillRect(0, 0, 300, 300);
@@ -47,15 +47,18 @@ export default class MiniDisplay extends React.Component<MiniDisplayProps> {
   setBounds() {
     const { objects, width, height } = this.props;
     // set init numbers that will be overwritten
-    let t = max, r = -max, b = -max, l = max;
+    let t = max,
+      r = -max,
+      b = -max,
+      l = max;
     const obs = objects.userObjects;
-    
+
     for (let i = 0; i < obs.length; i++) {
       t = obs[i].y < t ? obs[i].y : t;
       r = obs[i].x > r ? obs[i].xmax : r;
       b = obs[i].y > b ? obs[i].ymax : b;
       l = obs[i].x < l ? obs[i].x : l;
-    };
+    }
 
     t = t > -2500 ? -2500 : t;
     b = b < 2500 ? 2500 : b;
@@ -69,49 +72,48 @@ export default class MiniDisplay extends React.Component<MiniDisplayProps> {
     const k_h = height / h;
     this.bounds = { k_w, k_h, l, t };
   }
-  
+
   drawObjects() {
     const { k_w, k_h, l, t } = this.bounds;
     const obs = this.props.objects.userObjects;
-    
+
     this.ctx.fillStyle = '#ffc0cb77';
     for (let i = 0; i < obs.length; i++) {
       this.ctx.fillRect(
         (obs[i].x - l) * k_w,
         (obs[i].y - t) * k_h,
         obs[i].width * k_w,
-        obs[i].height * k_h
-        )
-      }
+        obs[i].height * k_h,
+      );
     }
+  }
 
   drawCamera() {
     const { k_w, k_h, l, t } = this.bounds;
     const { camera: c } = this.props;
-  
+
     this.ctx.strokeRect(
       (c.x - l) * k_w,
       (c.y - t) * k_h,
       c.width * k_w,
-      c.height * k_h
-    )
+      c.height * k_h,
+    );
   }
 
-  getEventPosition (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position {
+  getEventPosition(
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  ): Position {
     // @ts-ignore
     var rect = e.target.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
     const { k_w, k_h, l, t } = this.bounds;
-    return [
-      x / k_w + l,
-      y / k_h + t
-    ];
+    return [x / k_w + l, y / k_h + t];
   }
 
-  move (
+  move(
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-    moveFn: (pos: Position, isGlobal: boolean) => void
+    moveFn: (pos: Position, isGlobal: boolean) => void,
   ) {
     const [x1, y1] = this.getEventPosition(e);
     const [x0, y0] = this.p_0;
@@ -120,7 +122,9 @@ export default class MiniDisplay extends React.Component<MiniDisplayProps> {
     moveFn([-dx, -dy], true);
   }
 
-  private onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  private onMouseDown = (
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  ) => {
     this.engaged = true;
     this.setBounds();
     this.p_0 = this.getEventPosition(e);
@@ -128,7 +132,9 @@ export default class MiniDisplay extends React.Component<MiniDisplayProps> {
     this.props.camera.goTo(this.p_0);
     this.props.board.freeze();
   };
-  private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  private onMouseMove = (
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  ) => {
     if (this.engaged) {
       this.move(e, this.props.camera.moving);
       this.props.board.freeze();
@@ -144,13 +150,13 @@ export default class MiniDisplay extends React.Component<MiniDisplayProps> {
   render() {
     const { height, width } = this.props;
     return (
-      <div className='mini-display-container ui'>
+      <div className="mini-display-container ui">
         <canvas
           onMouseDown={this.onMouseDown}
           onMouseMove={this.onMouseMove}
           onMouseUp={this.onMouseUp}
-          ref={el => this.canvas = el}
-          height={height} 
+          ref={(el) => (this.canvas = el)}
+          height={height}
           width={width}
         />
       </div>

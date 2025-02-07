@@ -33,7 +33,7 @@ export const Login = () => {
       <form className="signup-form" onSubmit={submit}>
         <div className={cn(errorMsg && 'error', 'form-element-container')}>
           <div className="error-msg">{errorMsg}</div>
-          <div className='form-element-inner'>
+          <div className="form-element-inner">
             <label htmlFor="email">Email</label>
             <input
               id="email"
@@ -45,8 +45,8 @@ export const Login = () => {
           </div>
         </div>
 
-        <div className='form-element-container'>
-          <div className='form-element-inner'>
+        <div className="form-element-container">
+          <div className="form-element-inner">
             <label htmlFor="name">Password</label>
             <input
               id="password"
@@ -56,7 +56,7 @@ export const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          </div>
+        </div>
         <button type="submit">Submit</button>
       </form>
       <div>

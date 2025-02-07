@@ -1,5 +1,5 @@
-import { BoardObject } from "./Object";
-import { ObjectsState } from "./ObjectsState";
+import { BoardObject } from './Object';
+import { ObjectsState } from './ObjectsState';
 import _clonedeep from 'lodash.clonedeep';
 
 export class ObjectsHistory {
@@ -19,7 +19,7 @@ export class ObjectsHistory {
     this.idx++;
     return this.currentState;
   }
-  
+
   public undo(): ObjectsState {
     if (this.hasLast()) {
       this.idx--;
@@ -28,7 +28,7 @@ export class ObjectsHistory {
     }
     return this.currentState;
   }
-  
+
   public redo(): ObjectsState {
     if (this.hasNext()) {
       this.idx++;
@@ -38,7 +38,13 @@ export class ObjectsHistory {
     return this.currentState;
   }
 
-  public get currentState(): ObjectsState { return _clonedeep(this.history[this.idx]); }
-  public hasLast() { return this.idx > 0; };
-  public hasNext() { return this.idx < this.history.length - 1; };
+  public get currentState(): ObjectsState {
+    return _clonedeep(this.history[this.idx]);
+  }
+  public hasLast() {
+    return this.idx > 0;
+  }
+  public hasNext() {
+    return this.idx < this.history.length - 1;
+  }
 }

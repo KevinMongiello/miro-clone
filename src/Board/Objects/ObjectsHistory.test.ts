@@ -8,11 +8,11 @@
 //     const objects1 = new Objects();
 //     const objects2 = new Objects()
 //     objects2.addObject([1, 2], 3);
-    
+
 //     const history = new ObjectsHistory();
 //     history.add(objects1);
 //     history.add(objects2);
-    
+
 //     history.undo();
 //     expect(history.currentState.userObjects).to.equal(objects1);
 //   })
@@ -25,12 +25,12 @@
 //       objects2.addObject([1, 2], 3);
 //       objects3.addObject([1, 2], 3);
 //       objects3.addObject([3, 4], 5);
-      
+
 //       const history = new ObjectsHistory();
 //       history.add(objects1);
 //       history.add(objects2);
 //       history.add(objects3);
-      
+
 //       history.undo();
 //       expect(history.hasNext()).to.equal(true);
 //     });
@@ -42,12 +42,12 @@
 //       objects2.addObject([1, 2], 3);
 //       objects3.addObject([1, 2], 3);
 //       objects3.addObject([3, 4], 5);
-      
+
 //       const history = new ObjectsHistory();
 //       history.add(objects1);
 //       history.add(objects2);
 //       history.add(objects3);
-      
+
 //       history.undo();
 //       history.redo()
 //       expect(history.currentState.userObjects).to.equal(objects3);
@@ -60,18 +60,18 @@
 //       objects2.addObject([1, 2], 3);
 //       objects3.addObject([1, 2], 3);
 //       objects3.addObject([3, 4], 5);
-      
+
 //       const history = new ObjectsHistory();
 //       history.add(objects1);
 //       history.add(objects2);
 //       history.add(objects3);
-      
+
 //       history.undo();
 //       history.undo()
 //       const objects4 = new Objects();
 //       objects4.addObject([9, 8], 7);
 //       history.add(objects4);
-      
+
 //       it('forgets next states', () => {
 //         expect(history.currentState.userObjects).to.equal(objects4);
 //         expect(history.hasNext()).to.equal(false);

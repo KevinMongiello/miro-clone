@@ -1,7 +1,7 @@
-import { Position, Vector2 } from "../common/types";
-import { FreeformLine } from "../Objects/FreeformLine";
-import { Tool } from "./Tool";
-import { PerformEnd, PerformMove, PerformStart } from "./Tool.model";
+import { Position, Vector2 } from '../common/types';
+import { FreeformLine } from '../Objects/FreeformLine';
+import { Tool } from './Tool';
+import { PerformEnd, PerformMove, PerformStart } from './Tool.model';
 
 export class DrawTool extends Tool {
   private data: Position[] = [];
@@ -21,34 +21,38 @@ export class DrawTool extends Tool {
     this.engage();
     board.canvasHelper.freeze();
 
-    this.data.push(p_0_local)
+    this.data.push(p_0_local);
     // Is is a bad idea to expose canvasHelper and its members (ctx)?
     // Is this too tightly coupled? -- Is there a better alternative?
     board.canvasHelper.ctx.lineWidth = 1;
     board.canvasHelper.ctx.beginPath();
     board.canvasHelper.ctx.moveTo(...p_0_local);
-  }
+  };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   public performMove: PerformMove = (board, p_0_local, p_1_local) => {
     if (this.engaged) {
-      this.data.push(p_1_local)
+      this.data.push(p_1_local);
       board.canvasHelper.ctx.lineTo(...p_1_local);
       board.canvasHelper.ctx.stroke();
     }
-  }
+  };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   public performEnd: PerformEnd = (board, p_0, p_1_local) => {
-    this.data.push(p_1_local)
+    this.data.push(p_1_local);
     board.canvasHelper.ctx.lineTo(...p_1_local);
     board.canvasHelper.ctx.stroke();
-    board.addObject(new FreeformLine(this.data.map((pos: Position) => board.toGlobalPosition(pos))));
+    board.addObject(
+      new FreeformLine(
+        this.data.map((pos: Position) => board.toGlobalPosition(pos)),
+      ),
+    );
     this.disengage();
     this.reset();
-  }
+  };
 
   /**
    * Helpers

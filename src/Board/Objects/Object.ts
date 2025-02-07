@@ -15,8 +15,8 @@ export class BoardObject {
     fillStyle: 'rgba(100, 149, 237, 0.5)',
     stroke: 0,
     strokeStyle: '#000',
-    selected: false
-  }
+    selected: false,
+  };
   public x: number;
   public y: number;
   // keep track of last position to use in MoveVector when moving to next position
@@ -32,8 +32,12 @@ export class BoardObject {
   public selected: boolean = false;
   public locked: boolean = false;
 
-  constructor(...args: any)
-  constructor(pos: Position, size: Size, _options: BoardObjectConfig = BoardObject.defaultOptions) {
+  constructor(...args: any);
+  constructor(
+    pos: Position,
+    size: Size,
+    _options: BoardObjectConfig = BoardObject.defaultOptions,
+  ) {
     const [x, y] = pos;
     const [w, h] = size;
     this.x = x;
@@ -70,11 +74,8 @@ export class BoardObject {
   }
 
   public isWithin(p_0: Position, p_1: Position) {
-    const [x0, y0, x1, y1] = Vector2Util.standardCoords(p_0, p_1)
-    return x0 < this.x  &&
-      y0 < this.y &&
-      x1 > this.xmax &&
-      y1 > this.ymax;
+    const [x0, y0, x1, y1] = Vector2Util.standardCoords(p_0, p_1);
+    return x0 < this.x && y0 < this.y && x1 > this.xmax && y1 > this.ymax;
   }
 
   public containsPoints(p_0: Position, p_1: Position) {
@@ -85,22 +86,20 @@ export class BoardObject {
       [p_0[0], p_1[1]],
     ];
 
-    return verticies.some(vertex => this.containsPoint(vertex));
+    return verticies.some((vertex) => this.containsPoint(vertex));
   }
 
   public intersects(p_0: Position, p_1: Position) {
     const [left, top, right, bottom] = Vector2Util.standardCoords(p_0, p_1);
     const isWider = left < this.x && right > this.xmax;
     const isLonger = top < this.y && bottom > this.ymax;
-    return(
-      isWider && (
-        (top > this.y && top < this.ymax) ||
-        (bottom > this.y && bottom < this.ymax)
-      ) ||
-      isLonger && (
-        (left > this.x && left < this.xmax) ||
-        (right > this.x && right < this.xmax)
-      )
+    return (
+      (isWider &&
+        ((top > this.y && top < this.ymax) ||
+          (bottom > this.y && bottom < this.ymax))) ||
+      (isLonger &&
+        ((left > this.x && left < this.xmax) ||
+          (right > this.x && right < this.xmax)))
     );
   }
 
@@ -113,7 +112,7 @@ export class BoardObject {
   }
 
   public trySelect(p_0: Position, p_1: Position) {
-    this.selected = 
+    this.selected =
       this.containsPoints(p_0, p_1) ||
       this.isWithin(p_0, p_1) ||
       this.intersects(p_0, p_1);
@@ -130,10 +129,10 @@ export class BoardObject {
     this.yfrom = this.y;
   }
 
-  public draw (
+  public draw(
     ctx: CanvasRenderingContext2D,
     reposition: (p: Position) => Position,
-    rescale: (dim: Vector2) => Vector2
+    rescale: (dim: Vector2) => Vector2,
   ): void {
     const [obj_x, obj_y] = reposition(this.position);
     const [obj_w, obj_h] = rescale(this.dimensions);
@@ -147,8 +146,16 @@ export class BoardObject {
     }
   }
 
-  public get xmax(): number { return this.x + this.width; }
-  public get ymax(): number { return this.y + this.height; }
-  public get position(): Position { return [this.x, this.y]; }
-  public get dimensions(): Position { return [this.width, this.height]; }
+  public get xmax(): number {
+    return this.x + this.width;
+  }
+  public get ymax(): number {
+    return this.y + this.height;
+  }
+  public get position(): Position {
+    return [this.x, this.y];
+  }
+  public get dimensions(): Position {
+    return [this.width, this.height];
+  }
 }

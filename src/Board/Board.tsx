@@ -16,9 +16,11 @@ import { NavLink } from 'react-router';
 
 import './Board.scss';
 
-const getMousePosition = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position => {
+const getMousePosition = (
+  e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+): Position => {
   return [e.clientX, e.clientY];
-}
+};
 
 export default class Board extends React.Component<BoardProps> {
   public ctx: CanvasRenderingContext2D;
@@ -33,7 +35,7 @@ export default class Board extends React.Component<BoardProps> {
   private lastTool: Tool | null = null;
 
   state = {
-    currentTool: tools[0]
+    currentTool: tools[0],
   };
 
   /**
@@ -43,7 +45,11 @@ export default class Board extends React.Component<BoardProps> {
   componentDidMount() {
     this.controls = this.makeControls();
     this.setTool(tools[0]);
-    this.canvasHelper = new CanvasHelper(this.canvas, this.camera, this.objects);
+    this.canvasHelper = new CanvasHelper(
+      this.canvas,
+      this.camera,
+      this.objects,
+    );
     this.canvasHelper.mountCanvas();
     this.freeze();
 
@@ -62,45 +68,54 @@ export default class Board extends React.Component<BoardProps> {
   }
 
   bindSpaceKey = () => {
-    this.unregisterSpace = this.props.subscribeKeys(['Space'], this.onSpaceDown, this.resetTool)
-  }
+    this.unregisterSpace = this.props.subscribeKeys(
+      ['Space'],
+      this.onSpaceDown,
+      this.resetTool,
+    );
+  };
 
   onSpaceDown = () => {
     this.lastTool = this.state.currentTool;
     console.log('last tool: ', this.lastTool);
-    this.setState({ currentTool: tools.find(t => t.label === 'Pan') });
-  }
+    this.setState({ currentTool: tools.find((t) => t.label === 'Pan') });
+  };
 
   resetTool = () => {
     console.log('resetting to the last used tool: ', this.lastTool);
     this.setState({ currentTool: this.lastTool });
     this.lastTool = null;
-  }
+  };
 
   /**
    * Getters
    */
   public getObjectAtPos(p_global: Position): BoardObject | undefined {
-    return this.userObjects.find(ob => ob.containsPoint(p_global));
+    return this.userObjects.find((ob) => ob.containsPoint(p_global));
   }
 
   public getSelected(): BoardObject[] {
-    return this.userObjects.filter(obj => obj.selected);
+    return this.userObjects.filter((obj) => obj.selected);
   }
 
-  private get userObjects () { return this.objects.userObjects; }
+  private get userObjects() {
+    return this.objects.userObjects;
+  }
 
   /**
    * Mouse Mouse Handlers
    */
-  private onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    if (isRightMouseClick(e))
-      return;
+  private onMouseDown = (
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  ) => {
+    if (isRightMouseClick(e)) return;
     this.p_0_local = getMousePosition(e);
     this.canvasHelper.animate();
     this.state.currentTool.performStart(this, this.p_0_local);
   };
-  private onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  private onMouseMove = (
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  ) => {
     const p_1_local = getMousePosition(e);
     this.state.currentTool.performMove(this, this.p_0_local, p_1_local);
   };
@@ -111,8 +126,18 @@ export default class Board extends React.Component<BoardProps> {
   };
 
   makeControls = () => [
-    { name: 'undo', label: 'undo', action: this.undo, disabled: !this.getCanUndo },
-    { name: 'redo', label: 'redo', action: this.redo, disabled: !this.getCanRedo },
+    {
+      name: 'undo',
+      label: 'undo',
+      action: this.undo,
+      disabled: !this.getCanUndo,
+    },
+    {
+      name: 'redo',
+      label: 'redo',
+      action: this.redo,
+      disabled: !this.getCanRedo,
+    },
   ];
 
   getMouseListeners() {
@@ -149,34 +174,40 @@ export default class Board extends React.Component<BoardProps> {
   /**
    * Shapes
    */
-  public addShape (p_0_global: Position, p_1_global: Position) {
+  public addShape(p_0_global: Position, p_1_global: Position) {
     const ltbr = Vector2Util.ltrb(p_0_global, p_1_global);
     this.objects.createObject(ltbr[0], ltbr[1]);
   }
-  public addObject (object: BoardObject) {
+  public addObject(object: BoardObject) {
     this.objects.addObject(object);
   }
 
-  public createSelection = (position: Position) =>                 { this.objects.createSelectionObject(position); }
-  public updateSelection = (settings: BoardObjectConfigUpdate) => { this.objects.updateSelection(settings); }
-  public removeSelection = () =>                                   { this.objects.removeSelectionObject(); }
+  public createSelection = (position: Position) => {
+    this.objects.createSelectionObject(position);
+  };
+  public updateSelection = (settings: BoardObjectConfigUpdate) => {
+    this.objects.updateSelection(settings);
+  };
+  public removeSelection = () => {
+    this.objects.removeSelectionObject();
+  };
 
   public click(p_global: Position) {
-    this.userObjects.forEach(ob => ob.tryClick(p_global));
+    this.userObjects.forEach((ob) => ob.tryClick(p_global));
     this.refresh();
   }
 
   public select(p_0_global: Position, p_1_global: Position) {
-    this.userObjects.forEach(ob => {
+    this.userObjects.forEach((ob) => {
       ob.trySelect(p_0_global, p_1_global);
-    })
+    });
   }
 
   /**
    * Control Methods
    */
 
-  private refresh()  {
+  private refresh() {
     this.canvasHelper.render();
   }
   public freeze() {
@@ -186,35 +217,47 @@ export default class Board extends React.Component<BoardProps> {
   private undo = () => {
     this.objects.undo();
     this.canvasHelper.render();
-  }
+  };
   private redo = () => {
     this.objects.redo();
     this.canvasHelper.render();
+  };
+  private setTool = (tool: Tool) => {
+    this.setState({ currentTool: tool });
+  };
+  public get getCanUndo() {
+    return this.objects?.canUndo();
   }
-  private setTool = (tool: Tool) => { this.setState({ currentTool: tool }); };
-  public get getCanUndo() { return this.objects?.canUndo(); }
-  public get getCanRedo() { return this.objects?.canRedo(); }
+  public get getCanRedo() {
+    return this.objects?.canRedo();
+  }
 
   render() {
     return (
-      <div className='board-container'>
-        <NavLink id="homeLink"to="/">Home</NavLink>
+      <div className="board-container">
+        <NavLink id="homeLink" to="/">
+          Home
+        </NavLink>
         <canvas
-        {...this.getMouseListeners()}
-        onWheel={this.onScroll}
-        ref={(el: HTMLCanvasElement) => this.canvas = el}
-      />
-      <Controls controls={this.controls} />
-      <Tools tools={tools} current={this.state.currentTool} setTool={this.setTool} />
-      <MiniDisplay
-        width={200}
-        height={200}
-        ref={el => (this.miniDisplay = el)}
-        objects={this.objects}
-        camera={this.camera}
-        board={this}
-      />
-    </div>
+          {...this.getMouseListeners()}
+          onWheel={this.onScroll}
+          ref={(el: HTMLCanvasElement) => (this.canvas = el)}
+        />
+        <Controls controls={this.controls} />
+        <Tools
+          tools={tools}
+          current={this.state.currentTool}
+          setTool={this.setTool}
+        />
+        <MiniDisplay
+          width={200}
+          height={200}
+          ref={(el) => (this.miniDisplay = el)}
+          objects={this.objects}
+          camera={this.camera}
+          board={this}
+        />
+      </div>
     );
   }
 }
@@ -223,5 +266,5 @@ const tools = [
   new SelectionTool(),
   new ShapeTool(),
   new PanTool(),
-  new DrawTool()
+  new DrawTool(),
 ];

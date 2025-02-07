@@ -1,5 +1,5 @@
-import { Camera } from "../Camera";
-import { Objects } from "../Objects/Objects";
+import { Camera } from '../Camera';
+import { Objects } from '../Objects/Objects';
 
 export default class CanvasHelper {
   private canvas: HTMLCanvasElement;
@@ -11,47 +11,51 @@ export default class CanvasHelper {
   constructor(canvas: HTMLCanvasElement, camera: Camera, objects: Objects) {
     this.canvas = canvas;
     this.camera = camera;
-    this.ctx = this.canvas.getContext('2d')!;;
+    this.ctx = this.canvas.getContext('2d')!;
     this.objects = objects;
-  } 
+  }
 
   public mountCanvas() {
     const container = document.querySelector('body');
     if (!container) {
-      throw Error('The container might not have been mounted in time.')
+      throw Error('The container might not have been mounted in time.');
     }
     this.canvas.width = container.clientWidth || 0;
     this.canvas.height = container.clientHeight || 0;
   }
-  
+
   public render = () => {
     // might be costly to render every frame.  Can possibly be cached...
     // const objects = this.objects.getVisible(this.camera.bounds);
     const objects = this.objects.allObjects;
     this.clear();
 
-    objects.forEach(obj => {
+    objects.forEach((obj) => {
       obj.draw(
         this.ctx,
         this.camera.toLocalPosition.bind(this.camera),
-        this.camera.toLocalDimensions.bind(this.camera)
-      )
+        this.camera.toLocalDimensions.bind(this.camera),
+      );
     });
 
     this.drawInfo();
-  }
+  };
 
-  get height () { return this.canvas.height; }
-  get width () { return this.canvas.width; }
+  get height() {
+    return this.canvas.height;
+  }
+  get width() {
+    return this.canvas.width;
+  }
 
   drawInfo() {
     const objects = this.objects.getVisible(this.camera.bounds);
     this.ctx.fillStyle = 'black';
-    this.ctx.font = "20px Georgia";
-    const zoom = `Zoom: ${this.camera.zoom}`
-    const xCenter = `X (Center): ${this.camera.x_center}`
-    const yCenter = `Y (Center): ${this.camera.y_center}`
-    const objs = `Visible Objects: ${objects.length}`
+    this.ctx.font = '20px Georgia';
+    const zoom = `Zoom: ${this.camera.zoom}`;
+    const xCenter = `X (Center): ${this.camera.x_center}`;
+    const yCenter = `Y (Center): ${this.camera.y_center}`;
+    const objs = `Visible Objects: ${objects.length}`;
     const x = this.width - 420;
     const y = this.height - 100;
     this.ctx.fillText(zoom, x, y);
@@ -74,9 +78,11 @@ export default class CanvasHelper {
       this.clear();
       this.render();
     }
-  }
+  };
 
-  public animate = () => { this.requestId = requestAnimationFrame(this.runAnimation); }
+  public animate = () => {
+    this.requestId = requestAnimationFrame(this.runAnimation);
+  };
   public freeze() {
     cancelAnimationFrame(this.requestId);
     this.render();
