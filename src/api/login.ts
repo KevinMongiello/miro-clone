@@ -24,7 +24,7 @@ export const login = async (data: LoginData) => {
     } else if (res.status === 204) {
       throw Error('Invalid login information');
     } else if (res.status === 500) {
-      throw Error('Something went wrong. Try again later');
+      throw Error('Unable to login. Try again later');
     }
   } catch (err) {
     console.log(err);

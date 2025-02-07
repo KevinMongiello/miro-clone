@@ -1,6 +1,10 @@
-export const NewBoardCard = () => {
+interface NewBoardCardProps {
+  onNewBoard: () => void;
+}
+
+export const NewBoardCard = ({ onNewBoard }: NewBoardCardProps) => {
   return (
-    <div className='card new-card'>
+    <div onClick={onNewBoard} className='card new-card'>
       <span>New board</span>
     </div>
   );

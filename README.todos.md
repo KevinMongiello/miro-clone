@@ -15,10 +15,13 @@
       - [x] Set JWT cookie (login)
   - [ ] Use HTTPS
     - [ ] Does cookie work over non-https?... is it just for localhost?
-  - [ ] Forgot Password pages
-  - [ ] Enable Auth via Okta
+    - [ ] Probably just remove SHA-256 step
+  - [ ] Forgot Password page
+  - [ ] Enable Auth via Okta (?)
 - [ ] Notifications/banners
-- [ ] Integrate Jest and create tests
+- [ ] Boards
+  - [ ] fetch real boards
+  - [ ] Save boards after any/all user actions
 
 # Bugs
 - [ ] Visible objects stat includes background lines
@@ -30,6 +33,7 @@
 
 # Extras
 - [ ] Logging via Logrocket or similar
+- [ ] Integrate Jest and create tests
 
 # Notes
 - GET will still send cookies without credentials: 'include'

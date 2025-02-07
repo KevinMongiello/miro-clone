@@ -5,14 +5,14 @@ const BoardCard = ({ board }: any) => {
   return (
     <div className="card">
       <DropdownComponent />
-      <Link to={`board/${board.id}`}>
+      <Link to={`board/${board._id}`}>
         <div className='preview'></div>
         <div className="footer">
           <div className='board-name'>
-            <p>{board.name}</p>
+            <p>{board.title}</p>
           </div>
           <div className='board-author fade-in'>
-            <p>{board.user}</p>
+            <p>{board.user || 'Unknown Author'}</p>
           </div>
         </div>
       </Link>

@@ -1,13 +1,13 @@
-import { Menu, MenuItem } from '@szhsin/react-menu';
+import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/slide.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faShare, faClone, faPen, faImage, faCircleInfo, faArrowUpRightFromSquare, faLock, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 const DropdownComponent = () => {
   return (
     <div className='menu fade-in'>
-      <Menu menuButton={<i className="fa-solid fa-ellipsis" />} transition>
+      <Menu
+        menuButton={<MenuButton><div className='menu-btn-container'><i className="fa-solid fa-ellipsis" /></div></MenuButton>}
+        transition>
         {...menuItems}
       </Menu>
     </div>
@@ -17,19 +17,18 @@ const DropdownComponent = () => {
 export default DropdownComponent;
 
 
-
 const menuItemsData = [
   {
     url: '',
     title: 'Share',
-    icon: <FontAwesomeIcon icon={faShare} />,
+    icon: <i className="fa-solid fa-share-from-square"></i>,
     favicon: null
   },
 
   {
     url: '',
     title: 'Copy board link',
-    icon: <FontAwesomeIcon icon={faLink} />,
+    icon: <i className="fa-solid fa-copy"></i>,
     favicon: null
   },
 
@@ -38,42 +37,42 @@ const menuItemsData = [
   {
     url: '',
     title: 'Duplicate',
-    icon: <FontAwesomeIcon icon={faClone} />,
+    icon: <i className="fa-regular fa-clone"></i>,
     favicon: null
   },
 
   {
     url: '',
     title: 'Rename',
-    icon: <FontAwesomeIcon icon={faPen} />,
+    icon: <i className="fa-solid fa-pen-to-square"></i>,
     favicon: null
   },
 
   {
     url: '',
     title: 'Change thumbnail',
-    icon: <FontAwesomeIcon icon={faImage} />,
+    icon: <i className="fa-solid fa-image"></i>,
     favicon: null
   },
 
   {
     url: '',
     title: 'Board details',
-    icon: <FontAwesomeIcon icon={faCircleInfo} />,
+    icon: <i className="fa-solid fa-circle-info"></i>,
     favicon: null
   },
 
   {
     url: '',
     title: 'Open in new tab',
-    icon: <FontAwesomeIcon icon={faArrowUpRightFromSquare} />,
+    icon: <i className="fa-solid fa-arrow-up-from-bracket"></i>,
     favicon: null
   },
 
   {
     url: '',
     title: 'Make board private',
-    icon: <FontAwesomeIcon icon={faLock} />,
+    icon: <i className="fa-solid fa-lock"></i>,
     favicon: null
   },
 
@@ -82,7 +81,7 @@ const menuItemsData = [
   {
     url: '',
     title: 'Delete',
-    icon: <FontAwesomeIcon icon={faTrashCan} />,
+    icon: <i className="fa-solid fa-lock"></i>,
     favicon: null
   },
 ].map((item, idx) => item ? ({ ...item, id: idx + 1 }) : null);
