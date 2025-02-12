@@ -1,19 +1,13 @@
-import { sha256 } from './crypto';
-
 interface LoginData {
   email: string;
   password: string;
 }
 
 export const login = async (data: LoginData) => {
-  const secureForm = {
-    ...data,
-    password: await sha256(data.password),
-  };
   try {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify(secureForm),
+      body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
       },
