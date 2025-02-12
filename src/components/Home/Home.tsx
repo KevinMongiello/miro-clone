@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router';
 
 import BoardCard from './BoardCard/BoardCard';
 import { NewBoardCard } from './NewBoardCard';
-import { fetchUser } from '../api/user';
+import { fetchUser } from '../../api/user';
 
 import './Home.scss';
-import { logout } from '../api/login';
-import Board from '../Board/Board';
-import { createNewBoard, fetchBoards } from '../api/boards';
+import { logout } from '../../api/login';
+import Board from '../../components/Board/Board';
+import { createNewBoard, fetchBoards } from '../../api/boards';
 
 export interface User {
   name: string;

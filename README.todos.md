@@ -5,6 +5,9 @@
 
 # Todo
 
+- [ ] Boards
+  - [x] fetch real boards
+  - [ ] Save boards after any/all user actions
 - [ ] Auth
   - [x] Basic Auth: Signup, Login, Logout
   - [x] Advanced Auth: Password Encryption, form validation, Error messages
@@ -21,9 +24,6 @@
   - [ ] Forgot Password page
   - [ ] Enable Auth via Okta (?)
 - [ ] Notifications/banners
-- [ ] Boards
-  - [ ] fetch real boards
-  - [ ] Save boards after any/all user actions
 
 # Bugs
 

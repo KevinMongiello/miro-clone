@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import cn from 'classnames';
 
-import { login } from '../api/login';
+import { login } from '../../api/login';
 import './styles.scss';
 
 export const Login = () => {

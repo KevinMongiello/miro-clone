@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import cn from 'classnames';
 
-import { signup } from '../api/signup';
+import { signup } from '../../api/signup';
 import './styles.scss';
 
 export const Signup = () => {
