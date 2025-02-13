@@ -1,23 +1,14 @@
 import { Route, Routes } from 'react-router';
-import Board from './Board/Board';
-import KeyboardListener from './Board/KeyboardListener/KeyboardListener';
 import { Home } from './Home/Home';
 import { Route404 } from './404';
 import { Signup } from './Auth/Signup';
 import { Login } from './Auth/Login';
+import { BoardContainer } from './Board/BoardContainer';
 
 function App() {
-  const board = (
-    <KeyboardListener>
-      {/*
-        // @ts-ignore */}
-      <Board />
-    </KeyboardListener>
-  );
-
   return (
     <Routes>
-      <Route path="/board/:id" element={board} />
+      <Route path="/board/:id" element={<BoardContainer />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Home />} />

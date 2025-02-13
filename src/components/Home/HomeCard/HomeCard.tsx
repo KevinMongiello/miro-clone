@@ -1,10 +1,14 @@
 import { Link } from 'react-router';
 import DropdownComponent from './Dropdown';
 
-const BoardCard = ({ board }: any) => {
+const HomeCard = (props: any) => {
+  const { board } = props;
+  const handleDelete = () => {
+    props.handleDelete(board._id);
+  };
   return (
     <div className="card">
-      <DropdownComponent />
+      <DropdownComponent handleDelete={handleDelete} />
       <Link to={`board/${board._id}`}>
         <div className="preview"></div>
         <div className="footer">
@@ -20,4 +24,4 @@ const BoardCard = ({ board }: any) => {
   );
 };
 
-export default BoardCard;
+export default HomeCard;

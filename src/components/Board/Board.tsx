@@ -1,4 +1,7 @@
 import React from 'react';
+import { NavLink } from 'react-router';
+import debounce from 'lodash.debounce';
+
 import { Camera } from './Camera';
 import { Position, Vector2 } from './common/types';
 import { BoardObjectConfigUpdate } from './Objects/Object.model';
@@ -12,7 +15,6 @@ import MiniDisplay from './MiniDisplay/MiniDisplay';
 import Controls from './UI/Controls';
 import Tools from './UI/Tools';
 import { Vector2Util } from './utils/vector';
-import { NavLink } from 'react-router';
 
 import './Board.scss';
 
@@ -23,16 +25,19 @@ const getMousePosition = (
 };
 
 export default class Board extends React.Component<BoardProps> {
-  public ctx: CanvasRenderingContext2D;
-  public canvas: HTMLCanvasElement;
-  public canvasHelper: CanvasHelper;
-  public camera: Camera = new Camera();
-  public objects: Objects = new Objects();
   private p_0_local: Position;
   private controls: ControlModel[] = [];
   private miniDisplay: MiniDisplay | null;
   private unregisterSpace: () => void;
   private lastTool: Tool | null = null;
+  public ctx: CanvasRenderingContext2D;
+  public canvas: HTMLCanvasElement;
+  public canvasHelper: CanvasHelper;
+  public camera: Camera = new Camera();
+  public objects: Objects = new Objects(this.props.config?.objects);
+  public title: string = this.props.config?.title || 'Untitled';
+  public userId: string = this.props.config?.userId || 'Unknown User Id';
+  public id: string = this.props.config?._id || 'Unknown id';
 
   state = {
     currentTool: tools[0],
@@ -64,7 +69,7 @@ export default class Board extends React.Component<BoardProps> {
 
   __expose_objects_to_client__() {
     // @ts-ignore
-    window.__mclone_objects__ = this.objects;
+    window.__mclone_objects__ = () => this.userObjects;
   }
 
   bindSpaceKey = () => {
@@ -86,6 +91,13 @@ export default class Board extends React.Component<BoardProps> {
     this.setState({ currentTool: this.lastTool });
     this.lastTool = null;
   };
+
+  /**
+   * Api
+   */
+  protected save = debounce(() => {
+    this.props.saveBoard({objects: this.userObjects}, this.id);
+  }, 1000)
 
   /**
    * Getters
@@ -169,6 +181,7 @@ export default class Board extends React.Component<BoardProps> {
   }
   public move(objects: BoardObject[], vector: Vector2) {
     this.objects.move(objects, vector);
+    this.save();
   }
 
   /**
@@ -177,11 +190,16 @@ export default class Board extends React.Component<BoardProps> {
   public addShape(p_0_global: Position, p_1_global: Position) {
     const ltbr = Vector2Util.ltrb(p_0_global, p_1_global);
     this.objects.createObject(ltbr[0], ltbr[1]);
+    this.save();
   }
   public addObject(object: BoardObject) {
     this.objects.addObject(object);
+    this.save();
   }
 
+  /**
+   * Selection
+   */
   public createSelection = (position: Position) => {
     this.objects.createSelectionObject(position);
   };
@@ -217,10 +235,12 @@ export default class Board extends React.Component<BoardProps> {
   private undo = () => {
     this.objects.undo();
     this.canvasHelper.render();
+    this.save();
   };
   private redo = () => {
     this.objects.redo();
     this.canvasHelper.render();
+    this.save();
   };
   private setTool = (tool: Tool) => {
     this.setState({ currentTool: tool });

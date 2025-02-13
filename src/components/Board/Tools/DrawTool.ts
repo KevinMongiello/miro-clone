@@ -22,7 +22,7 @@ export class DrawTool extends Tool {
     board.canvasHelper.freeze();
 
     this.data.push(p_0_local);
-    // Is is a bad idea to expose canvasHelper and its members (ctx)?
+    // Is it a bad idea to expose canvasHelper and its members (ctx)?
     // Is this too tightly coupled? -- Is there a better alternative?
     board.canvasHelper.ctx.lineWidth = 1;
     board.canvasHelper.ctx.beginPath();
@@ -45,11 +45,10 @@ export class DrawTool extends Tool {
     this.data.push(p_1_local);
     board.canvasHelper.ctx.lineTo(...p_1_local);
     board.canvasHelper.ctx.stroke();
-    board.addObject(
-      new FreeformLine(
-        this.data.map((pos: Position) => board.toGlobalPosition(pos)),
-      ),
+    const globalPositionData = this.data.map((pos: Position) =>
+      board.toGlobalPosition(pos),
     );
+    board.addObject(FreeformLine.initializeFromGlobalData(globalPositionData));
     this.disengage();
     this.reset();
   };

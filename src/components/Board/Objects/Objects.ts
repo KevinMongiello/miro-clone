@@ -1,7 +1,8 @@
-import { Position, Vector2 } from '../common/types';
+import { Position, Size, Vector2 } from '../common/types';
+import { FreeformLine } from './FreeformLine';
 import { HorizontalLine, VerticalLine } from './LineObject';
 import { BoardObject } from './Object';
-import { BoardObjectConfig, BoardObjectConfigUpdate } from './Object.model';
+import { BoardObjectConfig, BoardObjectConfigUpdate, ObjectType } from './Object.model';
 import { ObjectsHistory } from './ObjectsHistory';
 import { ObjectsState } from './ObjectsState';
 
@@ -30,9 +31,21 @@ export class Objects {
   private gridObjects: BoardObject[] = defaultGridObjects;
   private selectionObject: BoardObject | null = null;
 
-  constructor(objects = []) {
-    Object.assign(this, objects);
-    this.history = new ObjectsHistory(objects);
+  constructor(objects: BoardObjectConfig[] = []) {
+    // Object.assign(this, objects);
+    const newObjects = objects.map(obj => {
+      // this should be simpler.
+      // Either store the x/y/w/h or else pos/size, and keep it uniform to the DB.
+      if (obj.type === ObjectType.FreeformLine) {
+        // data needs to be mapped to global coords...?
+        return new FreeformLine(obj);
+      } else {
+        const pos: Position = [obj.x, obj.y];
+        const size: Size = [obj.width, obj.height];
+        return new BoardObject(pos, size, obj);
+      }
+    })
+    this.history = new ObjectsHistory(newObjects);
     this.state = this.history.currentState;
   }
 
@@ -52,7 +65,8 @@ export class Objects {
     const [x0, y0] = p_0;
     const [x1, y1] = p_1;
     const size = [x1 - x0, y1 - y0];
-    this.addObject(new BoardObject(p_0, size, options));
+    const newObject = new BoardObject(p_0, size, options);
+    this.addObject(newObject);
   }
 
   public addObject(object: BoardObject): void {

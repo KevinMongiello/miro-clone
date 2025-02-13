@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Position, Size, Vector2 } from '../common/types';
 import { Vector2Util } from '../utils/vector';
-import { BoardObjectConfig } from './Object.model';
+import { BoardObjectConfig, ObjectType, ObjectVersion } from './Object.model';
 
 export class BoardObject {
   static defaultOptions: BoardObjectConfig = {
@@ -16,6 +16,8 @@ export class BoardObject {
     stroke: 0,
     strokeStyle: '#000',
     selected: false,
+    type: ObjectType.Square,
+    v: ObjectVersion.v0
   };
   public x: number;
   public y: number;
@@ -31,6 +33,8 @@ export class BoardObject {
   public id: string;
   public selected: boolean = false;
   public locked: boolean = false;
+  public type: ObjectType;
+  public v: ObjectVersion;
 
   constructor(...args: any);
   constructor(
@@ -40,16 +44,16 @@ export class BoardObject {
   ) {
     const [x, y] = pos;
     const [w, h] = size;
-    this.x = x;
-    this.y = y;
-    this.xfrom = x;
-    this.yfrom = y;
+    this.x = this.xfrom = x;
+    this.y = this.yfrom = y;
     this.width = w;
     this.height = h;
     const options = Object.assign({}, BoardObject.defaultOptions, _options);
-    options.fillStyle && (this.fillStyle = options.fillStyle);
-    options.stroke && (this.stroke = options.stroke);
-    options.strokeStyle && (this.strokeStyle = options.strokeStyle);
+    if (options.fillStyle) this.fillStyle = options.fillStyle;
+    if (options.stroke) this.stroke = options.stroke;
+    if (options.strokeStyle) this.strokeStyle = options.strokeStyle;
+    this.type = options.type;
+    this.v = options.v;
     this.id = uuidv4();
   }
 

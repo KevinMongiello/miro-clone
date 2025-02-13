@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import BoardCard from './BoardCard/BoardCard';
+import BoardCard from './HomeCard/HomeCard';
 import { NewBoardCard } from './NewBoardCard';
 import { fetchUser } from '../../api/user';
 
 import './Home.scss';
 import { logout } from '../../api/login';
 import Board from '../../components/Board/Board';
-import { createNewBoard, fetchBoards } from '../../api/boards';
+import { createNewBoard, deleteBoard, fetchBoards } from '../../api/boards';
 
 export interface User {
   name: string;
@@ -64,6 +64,11 @@ export const Home = () => {
     setBoards([...(boards || []), newBoard]);
   }, []);
 
+  const handleDelete = async (id: string) => {
+    await deleteBoard(id);
+    setUser({...user!})
+  }
+
   return (
     <div id="home">
       <nav>
@@ -83,7 +88,7 @@ export const Home = () => {
               <div className="cards">
                 <NewBoardCard onNewBoard={onNewBoard} />
                 {boards?.map((board, id) => (
-                  <BoardCard board={board} key={id} />
+                  <BoardCard handleDelete={handleDelete} board={board} key={id} />
                 ))}
               </div>
             )}
